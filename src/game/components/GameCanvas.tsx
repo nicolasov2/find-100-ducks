@@ -5,8 +5,8 @@ import { Canvas } from '@react-three/fiber';
 import { PointerLockControls } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
 import { Player } from '@/game/components/Player';
-import { TestRoom } from '@/game/components/TestRoom';
 import { LockOverlay } from '@/game/components/LockOverlay';
+import { Room1 } from '@/game/rooms/room1';
 
 export function GameCanvas(): React.JSX.Element {
   return (
@@ -24,7 +24,7 @@ export function GameCanvas(): React.JSX.Element {
         />
         <Suspense fallback={null}>
           <Physics gravity={[0, -9.81, 0]}>
-            <TestRoom />
+            <Room1 />
             <Player />
           </Physics>
         </Suspense>
