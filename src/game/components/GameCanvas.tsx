@@ -7,6 +7,9 @@ import { Physics } from '@react-three/rapier';
 import { Player } from '@/game/components/Player';
 import { LockOverlay } from '@/game/components/LockOverlay';
 import { Ducks } from '@/game/components/Ducks';
+import { Shooter } from '@/game/components/Shooter';
+import { HUD } from '@/game/components/HUD';
+import { WinScreen } from '@/game/components/WinScreen';
 import { Room1 } from '@/game/rooms/room1';
 
 export function GameCanvas(): React.JSX.Element {
@@ -29,10 +32,13 @@ export function GameCanvas(): React.JSX.Element {
             <Player />
           </Physics>
           <Ducks />
+          <Shooter />
         </Suspense>
         <PointerLockControls />
       </Canvas>
+      <HUD />
       <LockOverlay />
+      <WinScreen />
     </div>
   );
 }

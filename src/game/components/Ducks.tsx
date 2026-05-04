@@ -20,7 +20,12 @@ export function Ducks(): React.JSX.Element {
       {ducks
         .filter((d) => d.alive)
         .map((d) => (
-          <group key={d.id} position={d.position} rotation={d.rotation}>
+          <group
+            key={d.id}
+            position={d.position}
+            rotation={d.rotation}
+            userData={{ duckId: d.id }}
+          >
             <DuckModel useFallback />
           </group>
         ))}
