@@ -24,11 +24,13 @@ export function Shooter(): null {
   const camera = useThree((s) => s.camera);
   const scene = useThree((s) => s.scene);
   const hitDuck = useGameStore((s) => s.hitDuck);
+  const recordShot = useGameStore((s) => s.recordShot);
 
   useEffect(() => {
     const onMouseDown = (event: MouseEvent): void => {
       if (document.pointerLockElement === null) return;
       if (event.button !== 0) return;
+      recordShot(Date.now());
       camera.getWorldPosition(RAY_ORIGIN);
       camera.getWorldDirection(RAY_DIR);
       raycaster.set(RAY_ORIGIN, RAY_DIR);
@@ -43,7 +45,7 @@ export function Shooter(): null {
     return () => {
       window.removeEventListener('mousedown', onMouseDown);
     };
-  }, [camera, scene, hitDuck]);
+  }, [camera, scene, hitDuck, recordShot]);
 
   return null;
 }

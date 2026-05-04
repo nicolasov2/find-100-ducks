@@ -9,9 +9,11 @@ export interface GameState {
   ducks: readonly Duck[];
   startedAt: number | null;
   endedAt: number | null;
+  lastShotAt: number | null;
   setStatus: (status: GameStatus) => void;
   spawnDucks: (pool: readonly SpawnPoint[]) => void;
   hitDuck: (id: string) => void;
+  recordShot: (at: number) => void;
   reset: () => void;
 }
 
@@ -20,7 +22,9 @@ export const useGameStore = create<GameState>((set) => ({
   ducks: [],
   startedAt: null,
   endedAt: null,
+  lastShotAt: null,
   setStatus: (status) => set({ status }),
+  recordShot: (at) => set({ lastShotAt: at }),
   spawnDucks: (pool) =>
     set(() => {
       const picked = shuffled(pool).slice(0, DUCK_TARGET);
@@ -45,5 +49,11 @@ export const useGameStore = create<GameState>((set) => ({
       return { ducks };
     }),
   reset: () =>
-    set({ ducks: [], status: 'menu', startedAt: null, endedAt: null }),
+    set({
+      ducks: [],
+      status: 'menu',
+      startedAt: null,
+      endedAt: null,
+      lastShotAt: null,
+    }),
 }));
