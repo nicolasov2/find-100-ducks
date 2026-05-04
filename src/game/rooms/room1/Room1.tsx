@@ -5,6 +5,10 @@ import { Sofa } from './furniture/Sofa';
 import { Shelf } from './furniture/Shelf';
 import { Lamp } from './furniture/Lamp';
 import { Bed } from './furniture/Bed';
+import { CardboardBox } from './furniture/CardboardBox';
+import { BookStack } from './furniture/BookStack';
+import { Plant } from './furniture/Plant';
+import { FloorCushion } from './furniture/FloorCushion';
 
 const ROOM_SIZE = 20;
 const WALL_HEIGHT = 4;
@@ -53,6 +57,23 @@ export function Room1(): React.JSX.Element {
 
       <Shelf position={[-6, 0, -9.5]} />
       <Shelf position={[4, 0, -9.5]} />
+
+      <CardboardBox position={[-8, 0, 5.5]} rotationY={0.3} />
+      <CardboardBox position={[8.5, 0, -5.5]} rotationY={-0.4} />
+      <CardboardBox position={[-2, 0, -8.5]} rotationY={0.15} />
+
+      <BookStack position={[1.6, 0.9, -0.6]} />
+      <BookStack position={[-1.7, 0.9, 0.6]} />
+      <BookStack position={[-6, 1.55, -9.5]} />
+      <BookStack position={[4, 2.55, -9.5]} />
+
+      <Plant position={[-9, 0, -9]} />
+      <Plant position={[-8.5, 0, 8.8]} />
+      <Plant position={[8.6, 0, -2]} />
+
+      <FloorCushion position={[2, 0, 5]} rotationY={0.2} />
+      <FloorCushion position={[-3, 0, 4]} rotationY={-0.4} color="#06b6d4" trim="#0e7490" />
+      <FloorCushion position={[5, 0, 5.5]} rotationY={0.6} color="#ef4444" trim="#991b1b" />
     </group>
   );
 }
