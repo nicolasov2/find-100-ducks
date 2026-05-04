@@ -6,6 +6,7 @@ import { PointerLockControls } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
 import { Player } from '@/game/components/Player';
 import { LockOverlay } from '@/game/components/LockOverlay';
+import { Ducks } from '@/game/components/Ducks';
 import { Room1 } from '@/game/rooms/room1';
 
 export function GameCanvas(): React.JSX.Element {
@@ -27,6 +28,7 @@ export function GameCanvas(): React.JSX.Element {
             <Room1 />
             <Player />
           </Physics>
+          <Ducks />
         </Suspense>
         <PointerLockControls />
       </Canvas>
