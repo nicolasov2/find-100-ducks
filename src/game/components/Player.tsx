@@ -7,10 +7,12 @@ import type { RapierRigidBody } from '@react-three/rapier';
 import type { Ray } from '@dimforge/rapier3d-compat';
 import { Vector3 } from 'three';
 import { useKeyboard } from '@/game/hooks/useKeyboard';
+import { playFootstep } from '@/game/systems/AudioManager';
 
 const WALK_SPEED = 4;
 const JUMP_IMPULSE = 7.0;
 const JUMP_COOLDOWN_MS = 250;
+const FOOTSTEP_INTERVAL_MS = 350;
 const EYE_HEIGHT_OFFSET = 0.7;
 const CAPSULE_HALF_HEIGHT = 0.45;
 const CAPSULE_RADIUS = 0.4;
@@ -27,6 +29,7 @@ const UP_VEC = new Vector3(0, 1, 0);
 export function Player(): React.JSX.Element {
   const bodyRef = useRef<RapierRigidBody>(null);
   const lastJumpAtRef = useRef<number>(0);
+  const lastFootstepAtRef = useRef<number>(0);
   const groundRayRef = useRef<Ray | null>(null);
   const keys = useKeyboard();
   const camera = useThree((s) => s.camera);
@@ -80,6 +83,14 @@ export function Player(): React.JSX.Element {
       body,
     );
     const grounded = hit !== null && hit.timeOfImpact <= GROUND_RAY_TOI_THRESHOLD;
+
+    if (grounded && moveVec.lengthSq() > 0) {
+      const now = performance.now();
+      if (now - lastFootstepAtRef.current > FOOTSTEP_INTERVAL_MS) {
+        playFootstep();
+        lastFootstepAtRef.current = now;
+      }
+    }
 
     if (grounded && pressed.has(' ')) {
       const now = performance.now();

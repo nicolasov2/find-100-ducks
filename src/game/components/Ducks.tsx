@@ -20,9 +20,16 @@ export function Ducks(): React.JSX.Element {
   const containerRef = useRef<Group | null>(null);
   const camera = useThree((s) => s.camera);
 
+  const duckTarget = useGameStore((s) => s.duckTarget);
+
   useEffect(() => {
     if (ducks.length === 0) {
-      spawnDucks(SPAWN_POOL_ALL);
+      // In Ducks.tsx, we just use the duckTarget from the store if it's already set
+      // The actual spawn happens in StartButton, but this is a fallback for direct /play loads
+      import('@/store/settingsStore').then((m) => {
+        const config = m.getDifficultyConfig(m.useSettingsStore.getState().difficulty);
+        spawnDucks(SPAWN_POOL_ALL, config.duckCount);
+      });
     }
   }, [ducks.length, spawnDucks]);
 

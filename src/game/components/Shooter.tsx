@@ -5,6 +5,7 @@ import { useThree } from '@react-three/fiber';
 import { Raycaster, Vector3 } from 'three';
 import type { Object3D } from 'three';
 import { useGameStore } from '@/store/gameStore';
+import { playLaserShot, playDuckHit, initAudio } from '@/game/systems/AudioManager';
 
 const RAY_ORIGIN = new Vector3();
 const RAY_DIR = new Vector3();
@@ -38,6 +39,10 @@ export function Shooter(): null {
     const onMouseDown = (event: MouseEvent): void => {
       if (document.pointerLockElement === null) return;
       if (event.button !== 0) return;
+
+      initAudio();
+      playLaserShot();
+
       camera.getWorldPosition(RAY_ORIGIN);
       camera.getWorldDirection(FORWARD);
       RIGHT.crossVectors(FORWARD, CAMERA_UP).normalize();
@@ -80,6 +85,10 @@ export function Shooter(): null {
         duckId !== null
           ? (state.ducks.find((d) => d.id === duckId) ?? null)
           : null;
+
+      if (deadDuck) {
+        playDuckHit();
+      }
 
       state.triggerShot({
         at: Date.now(),

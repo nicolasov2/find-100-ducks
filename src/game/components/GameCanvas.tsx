@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { PointerLockControls } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
@@ -8,18 +8,32 @@ import { Player } from '@/game/components/Player';
 import { LockOverlay } from '@/game/components/LockOverlay';
 import { Ducks } from '@/game/components/Ducks';
 import { DyingDucks } from '@/game/components/DyingDucks';
+import { FeatherBursts } from '@/game/components/FeatherBursts';
 import { LaserBeams } from '@/game/components/LaserBeams';
 import { Shooter } from '@/game/components/Shooter';
 import { LaserGun } from '@/game/components/LaserGun';
 import { HUD } from '@/game/components/HUD';
 import { WinScreen } from '@/game/components/WinScreen';
+import { PauseMenu } from '@/game/components/PauseMenu';
+import { DustMotes } from '@/game/components/DustMotes';
 import { Room1 } from '@/game/rooms/room1';
 import { Hallway1 } from '@/game/rooms/hallway1';
 import { Room2 } from '@/game/rooms/room2';
 import { Hallway2 } from '@/game/rooms/hallway2';
 import { Room3 } from '@/game/rooms/room3';
+import { useGameStore } from '@/store/gameStore';
+import { initAudio, startMusic } from '@/game/systems/AudioManager';
 
 export function GameCanvas(): React.JSX.Element {
+  const status = useGameStore((s) => s.status);
+
+  useEffect(() => {
+    if (status === 'playing') {
+      initAudio();
+      startMusic();
+    }
+  }, [status]);
+
   return (
     <div className="relative h-full w-full">
       <Canvas
@@ -47,8 +61,10 @@ export function GameCanvas(): React.JSX.Element {
             <Room3 />
             <Player />
           </Physics>
+          <DustMotes />
           <Ducks />
           <DyingDucks />
+          <FeatherBursts />
           <LaserBeams />
           <Shooter />
           <LaserGun />
@@ -57,6 +73,7 @@ export function GameCanvas(): React.JSX.Element {
       </Canvas>
       <HUD />
       <LockOverlay />
+      <PauseMenu />
       <WinScreen />
     </div>
   );
