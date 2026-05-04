@@ -15,13 +15,24 @@ export const DUCK_PALETTES: readonly DuckPalette[] = [
   { bodyColor: '#d4a574', beakColor: '#92400e' },  // brown
 ];
 
-export const DUCK_SCALE_MIN = 0.6;
-export const DUCK_SCALE_MAX = 1.4;
+export const DUCK_SCALE_MIN = 0.35;
+export const DUCK_SCALE_MAX = 1.3;
 
 export function randomPalette(): DuckPalette {
   return DUCK_PALETTES[Math.floor(Math.random() * DUCK_PALETTES.length)]!;
 }
 
+/**
+ * Biased toward smaller ducks:
+ * 40% → tiny (0.35–0.55)
+ * 35% → small (0.55–0.8)
+ * 20% → medium (0.8–1.1)
+ * 5%  → large (1.1–1.3)
+ */
 export function randomScale(): number {
-  return DUCK_SCALE_MIN + Math.random() * (DUCK_SCALE_MAX - DUCK_SCALE_MIN);
+  const r = Math.random();
+  if (r < 0.40) return 0.35 + Math.random() * 0.20;
+  if (r < 0.75) return 0.55 + Math.random() * 0.25;
+  if (r < 0.95) return 0.80 + Math.random() * 0.30;
+  return 1.10 + Math.random() * 0.20;
 }
