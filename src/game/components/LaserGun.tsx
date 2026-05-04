@@ -8,6 +8,7 @@ import {
   Group,
   MeshStandardMaterial,
   SphereGeometry,
+  SpotLight,
   Vector3,
 } from 'three';
 import { useGameStore } from '@/store/gameStore';
@@ -26,6 +27,10 @@ const EMITTER_MAT = new MeshStandardMaterial({
   emissiveIntensity: 1.5,
 });
 
+/* Flashlight ring geometry (visual) */
+const RING_GEOM = new CylinderGeometry(0.025, 0.028, 0.03, 14);
+const RING_MAT = new MeshStandardMaterial({ color: '#3f3f46', metalness: 0.8, roughness: 0.3 });
+
 const OFFSET_X = 0.28;
 const OFFSET_Y = -0.22;
 const OFFSET_Z = -0.55;
@@ -37,8 +42,12 @@ const RECOIL_DURATION_MS = 180;
 const RECOIL_Z_PEAK = 0.07;
 const RECOIL_PITCH_PEAK = 0.22;
 
+/* Flashlight target — always ~20m in front */
+const FLASHLIGHT_TARGET = new Vector3();
+
 export function LaserGun(): React.JSX.Element {
   const groupRef = useRef<Group>(null);
+  const spotRef = useRef<SpotLight>(null);
   const prevPos = useRef<Vector3>(new Vector3());
   const phaseRef = useRef<number>(0);
   const camera = useThree((s) => s.camera);
@@ -76,6 +85,16 @@ export function LaserGun(): React.JSX.Element {
     group.translateY(OFFSET_Y + bobY);
     group.translateZ(OFFSET_Z + recoilZ);
     group.rotateX(recoilPitch);
+
+    /* Update flashlight target — 20m forward from camera */
+    const spot = spotRef.current;
+    if (spot) {
+      FLASHLIGHT_TARGET.copy(camera.position);
+      const dir = new Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+      FLASHLIGHT_TARGET.addScaledVector(dir, 20);
+      spot.target.position.copy(FLASHLIGHT_TARGET);
+      spot.target.updateMatrixWorld();
+    }
   });
 
   return (
@@ -89,6 +108,27 @@ export function LaserGun(): React.JSX.Element {
         material={BARREL_MAT}
       />
       <mesh position={[0, 0, -0.26]} geometry={EMITTER_GEOM} material={EMITTER_MAT} />
+
+      {/* Flashlight ring (visual) */}
+      <mesh
+        position={[0, 0, -0.21]}
+        rotation={[Math.PI / 2, 0, 0]}
+        geometry={RING_GEOM}
+        material={RING_MAT}
+      />
+
+      {/* Flashlight SpotLight */}
+      <spotLight
+        ref={spotRef}
+        position={[0, 0, -0.27]}
+        intensity={12}
+        distance={25}
+        angle={0.4}
+        penumbra={0.5}
+        decay={1.5}
+        color="#e8e4d9"
+        castShadow={false}
+      />
     </group>
   );
 }
