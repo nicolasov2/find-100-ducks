@@ -8,6 +8,7 @@ import type {
   SpawnPoint,
 } from '@/game/types';
 import { shuffled } from '@/game/utils/shuffle';
+import { randomPalette, randomScale } from '@/game/utils/duckPalettes';
 
 export const DUCK_TARGET = 100;
 export const BEAM_DURATION_MS = 90;
@@ -50,12 +51,18 @@ export const useGameStore = create<GameState>((set) => ({
   spawnDucks: (pool) =>
     set(() => {
       const picked = shuffled(pool).slice(0, DUCK_TARGET);
-      const ducks: Duck[] = picked.map((sp, i) => ({
-        id: `duck-${String(i).padStart(3, '0')}`,
-        spawnPointId: sp.id,
-        position: [sp.position[0], sp.position[1], sp.position[2]],
-        rotation: [0, Math.random() * Math.PI * 2, 0],
-      }));
+      const ducks: Duck[] = picked.map((sp, i) => {
+        const palette = randomPalette();
+        return {
+          id: `duck-${String(i).padStart(3, '0')}`,
+          spawnPointId: sp.id,
+          position: [sp.position[0], sp.position[1], sp.position[2]],
+          rotation: [0, Math.random() * Math.PI * 2, 0],
+          scale: randomScale(),
+          bodyColor: palette.bodyColor,
+          beakColor: palette.beakColor,
+        };
+      });
       return {
         ducks,
         dyingDucks: [],
@@ -83,6 +90,9 @@ export const useGameStore = create<GameState>((set) => ({
         id: deadDuck.id,
         position: deadDuck.position,
         rotation: deadDuck.rotation,
+        scale: deadDuck.scale,
+        bodyColor: deadDuck.bodyColor,
+        beakColor: deadDuck.beakColor,
         startedAt: at,
       };
       const dyingDucks = [...state.dyingDucks, dying];

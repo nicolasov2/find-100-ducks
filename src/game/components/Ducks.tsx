@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Group } from 'three';
 import { useGameStore } from '@/store/gameStore';
-import { SPAWN_POOL_ROOM_1 } from '@/game/rooms/room1';
+import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
 import { DuckModel } from '@/game/components/DuckModel';
 
 const BOB_AMPLITUDE = 0.025;
@@ -17,7 +17,7 @@ export function Ducks(): React.JSX.Element {
 
   useEffect(() => {
     if (ducks.length === 0) {
-      spawnDucks(SPAWN_POOL_ROOM_1);
+      spawnDucks(SPAWN_POOL_ALL);
     }
   }, [ducks.length, spawnDucks]);
 
@@ -45,7 +45,12 @@ export function Ducks(): React.JSX.Element {
           rotation={d.rotation}
           userData={{ duckId: d.id }}
         >
-          <DuckModel useFallback />
+          <DuckModel
+            useFallback
+            bodyColor={d.bodyColor}
+            beakColor={d.beakColor}
+            duckScale={d.scale}
+          />
         </group>
       ))}
     </group>

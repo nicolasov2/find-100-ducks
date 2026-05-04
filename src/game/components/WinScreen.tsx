@@ -1,7 +1,7 @@
 'use client';
 
 import { useGameStore } from '@/store/gameStore';
-import { SPAWN_POOL_ROOM_1 } from '@/game/rooms/room1';
+import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
 
 function formatElapsed(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
@@ -24,7 +24,7 @@ export function WinScreen(): React.JSX.Element | null {
 
   const playAgain = (): void => {
     reset();
-    spawnDucks(SPAWN_POOL_ROOM_1);
+    spawnDucks(SPAWN_POOL_ALL);
   };
 
   return (

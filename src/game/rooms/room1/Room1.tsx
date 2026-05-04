@@ -19,28 +19,62 @@ const HALF = ROOM_SIZE / 2;
 const FLOOR_COLOR = '#3f3f46';
 const WALL_COLOR = '#71717a';
 
+/* Archway on east wall: 2.5m wide × 3m tall, centered at z=0 */
+const ARCHWAY_WIDTH = 2.5;
+const ARCHWAY_HEIGHT = 3;
+const ARCHWAY_HALF_W = ARCHWAY_WIDTH / 2;
+
+/* East wall is split into 2 segments + lintel above archway */
+const EAST_SEG_LENGTH = (ROOM_SIZE - ARCHWAY_WIDTH) / 2;
+
 export function Room1(): React.JSX.Element {
   return (
     <group>
       <RigidBody type="fixed" colliders="cuboid">
+        {/* Floor */}
         <mesh position={[0, -FLOOR_THICKNESS / 2, 0]} receiveShadow>
           <boxGeometry args={[ROOM_SIZE, FLOOR_THICKNESS, ROOM_SIZE]} />
           <meshStandardMaterial color={FLOOR_COLOR} />
         </mesh>
+        {/* North wall */}
         <mesh position={[0, WALL_HEIGHT / 2, -HALF]} receiveShadow>
           <boxGeometry args={[ROOM_SIZE, WALL_HEIGHT, WALL_THICKNESS]} />
           <meshStandardMaterial color={WALL_COLOR} />
         </mesh>
+        {/* South wall */}
         <mesh position={[0, WALL_HEIGHT / 2, HALF]} receiveShadow>
           <boxGeometry args={[ROOM_SIZE, WALL_HEIGHT, WALL_THICKNESS]} />
           <meshStandardMaterial color={WALL_COLOR} />
         </mesh>
+        {/* West wall */}
         <mesh position={[-HALF, WALL_HEIGHT / 2, 0]} receiveShadow>
           <boxGeometry args={[WALL_THICKNESS, WALL_HEIGHT, ROOM_SIZE]} />
           <meshStandardMaterial color={WALL_COLOR} />
         </mesh>
-        <mesh position={[HALF, WALL_HEIGHT / 2, 0]} receiveShadow>
-          <boxGeometry args={[WALL_THICKNESS, WALL_HEIGHT, ROOM_SIZE]} />
+
+        {/* East wall — split for archway */}
+        {/* Segment south of archway */}
+        <mesh
+          position={[HALF, WALL_HEIGHT / 2, -(ARCHWAY_HALF_W + EAST_SEG_LENGTH / 2)]}
+          receiveShadow
+        >
+          <boxGeometry args={[WALL_THICKNESS, WALL_HEIGHT, EAST_SEG_LENGTH]} />
+          <meshStandardMaterial color={WALL_COLOR} />
+        </mesh>
+        {/* Segment north of archway */}
+        <mesh
+          position={[HALF, WALL_HEIGHT / 2, ARCHWAY_HALF_W + EAST_SEG_LENGTH / 2]}
+          receiveShadow
+        >
+          <boxGeometry args={[WALL_THICKNESS, WALL_HEIGHT, EAST_SEG_LENGTH]} />
+          <meshStandardMaterial color={WALL_COLOR} />
+        </mesh>
+        {/* Lintel above archway */}
+        <mesh
+          position={[HALF, ARCHWAY_HEIGHT + (WALL_HEIGHT - ARCHWAY_HEIGHT) / 2, 0]}
+          receiveShadow
+        >
+          <boxGeometry args={[WALL_THICKNESS, WALL_HEIGHT - ARCHWAY_HEIGHT, ARCHWAY_WIDTH]} />
           <meshStandardMaterial color={WALL_COLOR} />
         </mesh>
       </RigidBody>

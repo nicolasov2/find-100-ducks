@@ -9,7 +9,7 @@ import { Vector3 } from 'three';
 import { useKeyboard } from '@/game/hooks/useKeyboard';
 
 const WALK_SPEED = 4;
-const JUMP_IMPULSE = 5.0;
+const JUMP_IMPULSE = 7.0;
 const JUMP_COOLDOWN_MS = 250;
 const EYE_HEIGHT_OFFSET = 0.7;
 const CAPSULE_HALF_HEIGHT = 0.45;
@@ -99,7 +99,7 @@ export function Player(): React.JSX.Element {
       colliders={false}
       position={SPAWN}
       mass={1}
-      linearDamping={4}
+      linearDamping={2}
       lockRotations
       enabledRotations={[false, false, false]}
     >
