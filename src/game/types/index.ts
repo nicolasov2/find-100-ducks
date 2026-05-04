@@ -14,7 +14,20 @@ export interface Duck {
   readonly spawnPointId: string;
   readonly position: Vector3Tuple;
   readonly rotation: Vector3Tuple;
-  alive: boolean;
+}
+
+export interface DyingDuck {
+  readonly id: string;
+  readonly position: Vector3Tuple;
+  readonly rotation: Vector3Tuple;
+  readonly startedAt: number;
+}
+
+export interface BeamShot {
+  readonly id: string;
+  readonly from: Vector3Tuple;
+  readonly to: Vector3Tuple;
+  readonly startedAt: number;
 }
 
 export type GameStatus = 'menu' | 'playing' | 'won';

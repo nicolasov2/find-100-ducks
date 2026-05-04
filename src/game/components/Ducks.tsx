@@ -17,18 +17,16 @@ export function Ducks(): React.JSX.Element {
 
   return (
     <group>
-      {ducks
-        .filter((d) => d.alive)
-        .map((d) => (
-          <group
-            key={d.id}
-            position={d.position}
-            rotation={d.rotation}
-            userData={{ duckId: d.id }}
-          >
-            <DuckModel useFallback />
-          </group>
-        ))}
+      {ducks.map((d) => (
+        <group
+          key={d.id}
+          position={d.position}
+          rotation={d.rotation}
+          userData={{ duckId: d.id }}
+        >
+          <DuckModel useFallback />
+        </group>
+      ))}
     </group>
   );
 }

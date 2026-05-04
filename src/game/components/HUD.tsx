@@ -15,7 +15,7 @@ export function HUD(): React.JSX.Element {
   const status = useGameStore((s) => s.status);
   const startedAt = useGameStore((s) => s.startedAt);
   const endedAt = useGameStore((s) => s.endedAt);
-  const remaining = useGameStore((s) => s.ducks.filter((d) => d.alive).length);
+  const remaining = useGameStore((s) => s.ducks.length);
   const found = DUCK_TARGET - remaining;
 
   const [now, setNow] = useState<number>(0);

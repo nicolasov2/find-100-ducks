@@ -7,6 +7,8 @@ import { Physics } from '@react-three/rapier';
 import { Player } from '@/game/components/Player';
 import { LockOverlay } from '@/game/components/LockOverlay';
 import { Ducks } from '@/game/components/Ducks';
+import { DyingDucks } from '@/game/components/DyingDucks';
+import { LaserBeams } from '@/game/components/LaserBeams';
 import { Shooter } from '@/game/components/Shooter';
 import { LaserGun } from '@/game/components/LaserGun';
 import { HUD } from '@/game/components/HUD';
@@ -33,6 +35,8 @@ export function GameCanvas(): React.JSX.Element {
             <Player />
           </Physics>
           <Ducks />
+          <DyingDucks />
+          <LaserBeams />
           <Shooter />
           <LaserGun />
         </Suspense>
