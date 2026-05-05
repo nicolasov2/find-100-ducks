@@ -50,6 +50,16 @@ const POSITIONS: readonly Vector3Tuple[] = [
   // ── Open floor (6) ──
   [CX - 3, 0.08, 0], [CX + 3, 0.08, 0], [CX, 0.08, -3],
   [CX - 5, 0.08, 5], [CX + 5, 0.08, 4], [CX, 0.08, 5],
+  // ── Pot rack — hanging in pots (4) ──
+  [CX, 2.50, 1.0], [CX - 0.5, 2.50, 1.0], [CX - 4, 2.50, -2], [CX - 4.5, 2.50, -2.0],
+  // ── Beside brooms — corner (2) ──
+  [CX + 7.0, 0.08, 6.0], [CX - 7.0, 0.08, -6.0],
+  // ── On herb planter (3) ──
+  [CX + 7.2, 1.55, -6.0], [CX + 7.2, 1.40, -6.5], [CX + 7.0, 1.55, -5.5],
+  // ── Above cabinets — ceiling-level (3) ──
+  [CX - 2.0, 3.10, -6.5], [CX + 0.5, 3.10, -6.5], [CX + 3, 3.10, -6.5],
+  // ── Inside open trash cans (2) ──
+  [CX + 7.3, 0.40, 5.8], [CX - 7.3, 0.40, -1.8],
 ];
 
 export const SPAWN_POOL_ROOM_2: readonly SpawnPoint[] = POSITIONS.map((p, i) => ({

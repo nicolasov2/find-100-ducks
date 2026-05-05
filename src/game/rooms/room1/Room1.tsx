@@ -13,6 +13,8 @@ import { TVStand } from './furniture/TVStand';
 import { CoatRack } from './furniture/CoatRack';
 import { WallPainting } from './furniture/WallPainting';
 import { SideTable } from './furniture/SideTable';
+import { PlanterBox } from './furniture/PlanterBox';
+import { Pouf } from './furniture/Pouf';
 
 const ROOM_SIZE = 20;
 const WALL_HEIGHT = 4;
@@ -135,6 +137,16 @@ export function Room1(): React.JSX.Element {
       <WallPainting position={[-9.85, 2.0, 5]} rotationY={Math.PI / 2} colorIndex={2} />
       <WallPainting position={[-9.85, 2.8, -5]} rotationY={Math.PI / 2} colorIndex={3} width={1.2} height={0.5} />
       <WallPainting position={[5, 2.3, 9.85]} rotationY={Math.PI} colorIndex={4} />
+
+      {/* ── Planters ── */}
+      <PlanterBox position={[-9, 0, 0]} rotationY={Math.PI / 2} />
+      <PlanterBox position={[9, 0, 6]} rotationY={Math.PI / 2} />
+      <PlanterBox position={[-3, 0, 9]} rotationY={0} />
+
+      {/* ── Poufs ── */}
+      <Pouf position={[1, 0, 6]} color="#7c3aed" />
+      <Pouf position={[3, 0, 7]} color="#06b6d4" />
+      <Pouf position={[-7, 0, -2]} color="#dc2626" />
     </group>
   );
 }

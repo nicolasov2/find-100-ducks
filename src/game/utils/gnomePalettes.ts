@@ -22,7 +22,7 @@ export const GNOME_PALETTES: readonly GnomePalette[] = [
 const BEARD_STYLES: readonly BeardStyle[] = ['normal', 'normal', 'normal', 'long', 'none'];
 
 export const GNOME_SCALE_MIN = 0.55;
-export const GNOME_SCALE_MAX = 1.4;
+export const GNOME_SCALE_MAX = 1.15;
 
 export function randomPalette(): GnomePalette {
   return GNOME_PALETTES[Math.floor(Math.random() * GNOME_PALETTES.length)]!;
@@ -34,15 +34,15 @@ export function randomBeard(): BeardStyle {
 
 /**
  * Biased toward smaller gnomes:
- * 40% → tiny (0.55–0.75)
- * 35% → small (0.75–0.95)
- * 20% → medium (0.95–1.2)
- * 5%  → large (1.2–1.4)
+ * 45% → tiny (0.55–0.72)
+ * 35% → small (0.72–0.90)
+ * 18% → medium (0.90–1.05)
+ * 2%  → large (1.05–1.15)
  */
 export function randomScale(): number {
   const r = Math.random();
-  if (r < 0.40) return 0.55 + Math.random() * 0.20;
-  if (r < 0.75) return 0.75 + Math.random() * 0.20;
-  if (r < 0.95) return 0.95 + Math.random() * 0.25;
-  return 1.20 + Math.random() * 0.20;
+  if (r < 0.45) return 0.55 + Math.random() * 0.17;
+  if (r < 0.80) return 0.72 + Math.random() * 0.18;
+  if (r < 0.98) return 0.90 + Math.random() * 0.15;
+  return 1.05 + Math.random() * 0.10;
 }

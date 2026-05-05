@@ -15,6 +15,9 @@ import { Chair } from '@/game/rooms/room1/furniture/Chair';
 import { BookStack } from '@/game/rooms/room1/furniture/BookStack';
 import { FloorCushion } from '@/game/rooms/room1/furniture/FloorCushion';
 import { Shelf } from '@/game/rooms/room1/furniture/Shelf';
+import { PotRack } from './furniture/PotRack';
+import { Broom } from './furniture/Broom';
+import { PlanterBox } from '@/game/rooms/room1/furniture/PlanterBox';
 
 const WIDTH = 16;
 const DEPTH = 14;
@@ -129,6 +132,17 @@ export function Room2(): React.JSX.Element {
 
       {/* ── Book stacks on counter ── */}
       <BookStack position={[CX + 1.5, 0.98, CZ - HD + 0.6]} />
+
+      {/* ── Pot rack hanging from ceiling ── */}
+      <PotRack position={[CX, 2.7, CZ + 1]} />
+      <PotRack position={[CX - 4, 2.7, CZ - 2]} />
+
+      {/* ── Brooms in corners ── */}
+      <Broom position={[CX + HW - 0.6, 0, CZ + HD - 0.6]} rotationY={-0.6} />
+      <Broom position={[CX - HW + 0.6, 0, CZ - HD + 0.6]} rotationY={0.6} />
+
+      {/* ── Herb planter near window ── */}
+      <PlanterBox position={[CX + HW - 0.4, 1.0, CZ - HD + 0.6]} rotationY={0} />
 
       {/* ── Lighting ── */}
       <pointLight position={[CX, 3.5, CZ]} intensity={8} distance={12} decay={2} color="#fef3c7" />

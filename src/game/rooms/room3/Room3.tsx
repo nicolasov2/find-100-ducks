@@ -16,6 +16,9 @@ import { CardboardBox } from '@/game/rooms/room1/furniture/CardboardBox';
 import { FloorCushion } from '@/game/rooms/room1/furniture/FloorCushion';
 import { SideTable } from '@/game/rooms/room1/furniture/SideTable';
 import { WallPainting } from '@/game/rooms/room1/furniture/WallPainting';
+import { Pouf } from '@/game/rooms/room1/furniture/Pouf';
+import { PlanterBox } from '@/game/rooms/room1/furniture/PlanterBox';
+import { RockingChair } from './furniture/RockingChair';
 
 const WIDTH = 14;
 const DEPTH = 12;
@@ -135,6 +138,17 @@ export function Room3(): React.JSX.Element {
       {/* ── Cushions ── */}
       <FloorCushion position={[CX - 1, 0, CZ + 3]} rotationY={0.5} color="#7f1d1d" trim="#991b1b" />
       <FloorCushion position={[CX + 1, 0, CZ - 2]} rotationY={-0.3} color="#1e3a5f" trim="#1e40af" />
+
+      {/* ── Rocking chairs ── */}
+      <RockingChair position={[CX - 4, 0, CZ - 4]} rotationY={Math.PI / 4} />
+      <RockingChair position={[CX + 5, 0, CZ - 3]} rotationY={-Math.PI / 5} />
+
+      {/* ── Poufs ── */}
+      <Pouf position={[CX - 2, 0, CZ + 5]} color="#7c3aed" />
+      <Pouf position={[CX + 3, 0, CZ + 5.5]} color="#dc2626" />
+
+      {/* ── Planter ── */}
+      <PlanterBox position={[CX, 0, CZ - 5.5]} rotationY={0} />
 
       {/* ── Lighting ── */}
       <pointLight position={[CX, 3.5, CZ]} intensity={6} distance={12} decay={2} color="#fef3c7" />
