@@ -112,20 +112,10 @@ export function Garden(): React.JSX.Element {
       <CardboardBox position={[CX + 7, 0, CZ + HD - 5]} rotationY={0.4} />
       <CardboardBox position={[CX - 7, 0, CZ + 5]} rotationY={-0.3} />
 
-      {/* Sun */}
-      <directionalLight
-        position={[CX - 5, 12, CZ - 5]}
-        intensity={1.4}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-        shadow-camera-left={-15}
-        shadow-camera-right={15}
-        shadow-camera-top={15}
-        shadow-camera-bottom={-15}
-        shadow-camera-far={40}
-        color="#fff7d6"
-      />
-      <ambientLight intensity={0.45} color="#cfe9ff" />
+      {/* Outdoor fill lights */}
+      <pointLight position={[CX, 5, CZ]} intensity={3} distance={20} decay={2} color="#fff7d6" />
+      <pointLight position={[CX - 6, 4, CZ + 5]} intensity={1.5} distance={12} decay={2} color="#fff7d6" />
+      <pointLight position={[CX + 6, 4, CZ - 4]} intensity={1.5} distance={12} decay={2} color="#fff7d6" />
     </group>
   );
 }

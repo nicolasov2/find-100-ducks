@@ -46,17 +46,18 @@ export function GameCanvas(): React.JSX.Element {
         shadows
         camera={{ fov: 75, near: 0.1, far: 1000, position: [0, 1.7, 0] }}
       >
-        <ambientLight intensity={0.15} />
+        <ambientLight intensity={0.45} />
+        <hemisphereLight args={['#bfdfff', '#3a2a1a', 0.35]} />
         <directionalLight
-          position={[15, 15, 10]}
-          intensity={0.6}
+          position={[15, 18, 10]}
+          intensity={0.9}
           castShadow
           shadow-mapSize={[2048, 2048]}
           shadow-camera-left={-40}
           shadow-camera-right={40}
-          shadow-camera-top={30}
-          shadow-camera-bottom={-30}
-          shadow-camera-far={80}
+          shadow-camera-top={40}
+          shadow-camera-bottom={-40}
+          shadow-camera-far={100}
         />
         <Suspense fallback={null}>
           <Physics gravity={[0, -25, 0]}>

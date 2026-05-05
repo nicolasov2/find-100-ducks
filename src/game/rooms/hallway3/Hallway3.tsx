@@ -29,6 +29,7 @@ export function Hallway3(): React.JSX.Element {
           <meshStandardMaterial color={WALL_COLOR} />
         </mesh>
       </RigidBody>
+      <pointLight position={[0, 2.5, MID_Z]} intensity={6} distance={6} decay={2} color="#fef3c7" />
     </group>
   );
 }
