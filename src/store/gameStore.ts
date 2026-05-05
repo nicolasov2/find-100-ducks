@@ -16,8 +16,9 @@ export const BEAM_DURATION_MS = 90;
 export const DEATH_DURATION_MS = 380;
 export const EXP_POPUP_DURATION_MS = 900;
 export const EXP_BASE = 5;
-export const HINT_DURATION_MS = 2500;
-export const HINT_AUTO_GLOW_THRESHOLD = 10;
+export const HINT_DURATION_MS = 5000;
+export const HINT_AUTO_GLOW_THRESHOLD = 5;
+export const HINT_EXP_COST = 50;
 const COMBO_WINDOW_MS = 5000;
 const COMBO_MULTIPLIERS = [1.0, 1.4, 1.8, 2.0, 2.4, 2.8, 3.0] as const;
 
@@ -231,14 +232,23 @@ export const useGameStore = create<GameState>((set) => ({
       const expPopups = state.expPopups.filter(
         (p) => now - p.startedAt < EXP_POPUP_DURATION_MS,
       );
+      const hintExpired =
+        state.hintActivatedAt !== null &&
+        now - state.hintActivatedAt > HINT_DURATION_MS;
       if (
         beams.length === state.beams.length &&
         dyingGnomes.length === state.dyingGnomes.length &&
-        expPopups.length === state.expPopups.length
+        expPopups.length === state.expPopups.length &&
+        !hintExpired
       ) {
         return state;
       }
-      return { beams, dyingGnomes, expPopups };
+      return {
+        beams,
+        dyingGnomes,
+        expPopups,
+        ...(hintExpired ? { hintActivatedAt: null } : {}),
+      };
     }),
   clearHitFlash: () => set({ hitFlash: false }),
   reset: () =>

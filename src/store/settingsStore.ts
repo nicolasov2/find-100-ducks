@@ -57,6 +57,7 @@ export interface SettingsState {
   addLeaderboardEntry: (entry: LeaderboardEntry) => void;
   unlockAchievement: (id: string) => void;
   addExp: (amount: number) => void;
+  spendExp: (amount: number) => boolean;
   unlockWeapon: (id: string) => void;
   setSelectedWeapon: (id: string) => void;
 }
@@ -116,6 +117,15 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     const next = get().totalExp + Math.max(0, Math.round(amount));
     set({ totalExp: next });
     saveToStorage('f100d_totalExp', next);
+  },
+
+  spendExp: (amount) => {
+    const cur = get().totalExp;
+    if (cur < amount) return false;
+    const next = cur - amount;
+    set({ totalExp: next });
+    saveToStorage('f100d_totalExp', next);
+    return true;
   },
 
   unlockWeapon: (id) => {

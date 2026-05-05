@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useGameStore, getComboMultiplier } from '@/store/gameStore';
+import { useGameStore, getComboMultiplier, HINT_EXP_COST } from '@/store/gameStore';
+import { useSettingsStore } from '@/store/settingsStore';
 
 function formatElapsed(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
@@ -22,8 +23,10 @@ export function HUD(): React.JSX.Element {
   const clearHitFlash = useGameStore((s) => s.clearHitFlash);
   const comboDisplay = useGameStore((s) => s.comboDisplay);
   const totalExpGained = useGameStore((s) => s.stats.totalExpGained);
+  const totalExp = useSettingsStore((s) => s.totalExp);
   const found = gnomeTarget - remaining;
   const comboMult = getComboMultiplier(comboDisplay);
+  const canAffordHint = totalExp >= HINT_EXP_COST;
 
   const [now, setNow] = useState<number>(0);
   const [shotAnim, setShotAnim] = useState(false);
@@ -154,15 +157,24 @@ export function HUD(): React.JSX.Element {
         </div>
       )}
 
-      {/* EXP earned this game */}
-      <div className="absolute left-4 top-24 rounded bg-black/50 px-2 py-1 text-xs backdrop-blur-sm">
-        ⭐ {totalExpGained} EXP
+      {/* EXP earned this game + total wallet */}
+      <div className="absolute left-4 top-24 flex flex-col gap-1">
+        <div className="rounded bg-black/50 px-2 py-1 text-xs backdrop-blur-sm">
+          ⭐ +{totalExpGained} EXP <span className="text-zinc-400">· total {totalExp}</span>
+        </div>
       </div>
 
-      {/* Hint tip when few gnomes remain */}
-      {remaining > 0 && remaining <= 15 && (
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full bg-cyan-500/80 px-4 py-2 text-xs font-semibold text-white backdrop-blur-sm animate-pulse">
-          💡 Presiona <kbd className="rounded bg-white/30 px-1">H</kbd> para revelar gnomos
+      {/* Hint tip — always available, but shows cost */}
+      {remaining > 0 && (
+        <div
+          className={`absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full px-4 py-2 text-xs font-semibold text-white backdrop-blur-sm transition ${
+            canAffordHint
+              ? 'bg-cyan-500/80 animate-pulse'
+              : 'bg-zinc-800/80 opacity-70'
+          }`}
+        >
+          💡 <kbd className="rounded bg-white/30 px-1">H</kbd> revelar gnomos · {HINT_EXP_COST} EXP
+          {!canAffordHint && <span className="ml-2 text-red-300">insuficiente</span>}
         </div>
       )}
 
