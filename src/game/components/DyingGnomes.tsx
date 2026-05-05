@@ -4,34 +4,34 @@ import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Group, MeshStandardMaterial } from 'three';
 import { DEATH_DURATION_MS, useGameStore } from '@/store/gameStore';
-import type { DyingDuck } from '@/game/types';
+import type { DyingGnome } from '@/game/types';
 import {
-  DUCK_BEAK_GEOM,
-  DUCK_BODY_GEOM,
-  DUCK_HEAD_GEOM,
-} from '@/game/components/DuckModel';
+  GNOME_BEAK_GEOM,
+  GNOME_BODY_GEOM,
+  GNOME_HEAD_GEOM,
+} from '@/game/components/GnomeModel';
 
-export function DyingDucks(): React.JSX.Element {
-  const dyingDucks = useGameStore((s) => s.dyingDucks);
+export function DyingGnomes(): React.JSX.Element {
+  const dyingGnomes = useGameStore((s) => s.dyingGnomes);
   const purge = useGameStore((s) => s.purgeExpiredEffects);
 
   useFrame(() => {
     const now = Date.now();
-    if (dyingDucks.some((d) => now - d.startedAt >= DEATH_DURATION_MS)) {
+    if (dyingGnomes.some((d) => now - d.startedAt >= DEATH_DURATION_MS)) {
       purge(now);
     }
   });
 
   return (
     <group>
-      {dyingDucks.map((d) => (
-        <DyingDuckMesh key={d.id} duck={d} />
+      {dyingGnomes.map((d) => (
+        <DyingGnomeMesh key={d.id} gnome={d} />
       ))}
     </group>
   );
 }
 
-function DyingDuckMesh({ duck }: { duck: DyingDuck }): React.JSX.Element {
+function DyingGnomeMesh({ gnome }: { gnome: DyingGnome }): React.JSX.Element {
   const groupRef = useRef<Group | null>(null);
   const bodyMatRef = useRef<MeshStandardMaterial | null>(null);
   const headMatRef = useRef<MeshStandardMaterial | null>(null);
@@ -43,11 +43,11 @@ function DyingDuckMesh({ duck }: { duck: DyingDuck }): React.JSX.Element {
     const headMat = headMatRef.current;
     const beakMat = beakMatRef.current;
     if (!group || !bodyMat || !headMat || !beakMat) return;
-    const t = Math.min((Date.now() - duck.startedAt) / DEATH_DURATION_MS, 1);
+    const t = Math.min((Date.now() - gnome.startedAt) / DEATH_DURATION_MS, 1);
     const scale =
       t < 0.18 ? 1 + (t / 0.18) * 0.45 : 1.45 - ((t - 0.18) / 0.82) * 1.45;
-    group.scale.setScalar(Math.max(0.001, scale * duck.scale));
-    group.rotation.y = duck.rotation[1] + t * Math.PI * 4;
+    group.scale.setScalar(Math.max(0.001, scale * gnome.scale));
+    group.rotation.y = gnome.rotation[1] + t * Math.PI * 4;
     const opacity = Math.max(0, 1 - t);
     bodyMat.opacity = opacity;
     headMat.opacity = opacity;
@@ -55,19 +55,19 @@ function DyingDuckMesh({ duck }: { duck: DyingDuck }): React.JSX.Element {
   });
 
   return (
-    <group ref={groupRef} position={duck.position}>
-      <mesh position={[0, 0.1, 0]} geometry={DUCK_BODY_GEOM}>
-        <meshStandardMaterial ref={bodyMatRef} color={duck.bodyColor} transparent />
+    <group ref={groupRef} position={gnome.position}>
+      <mesh position={[0, 0.1, 0]} geometry={GNOME_BODY_GEOM}>
+        <meshStandardMaterial ref={bodyMatRef} color={gnome.bodyColor} transparent />
       </mesh>
-      <mesh position={[0, 0.21, -0.04]} geometry={DUCK_HEAD_GEOM}>
-        <meshStandardMaterial ref={headMatRef} color={duck.bodyColor} transparent />
+      <mesh position={[0, 0.21, -0.04]} geometry={GNOME_HEAD_GEOM}>
+        <meshStandardMaterial ref={headMatRef} color={gnome.bodyColor} transparent />
       </mesh>
       <mesh
         position={[0, 0.21, 0.06]}
         rotation={[Math.PI / 2, 0, 0]}
-        geometry={DUCK_BEAK_GEOM}
+        geometry={GNOME_BEAK_GEOM}
       >
-        <meshStandardMaterial ref={beakMatRef} color={duck.beakColor} transparent />
+        <meshStandardMaterial ref={beakMatRef} color={gnome.beakColor} transparent />
       </mesh>
     </group>
   );

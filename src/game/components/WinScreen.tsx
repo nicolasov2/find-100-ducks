@@ -25,9 +25,9 @@ export function WinScreen(): React.JSX.Element | null {
   const startedAt = useGameStore((s) => s.startedAt);
   const endedAt = useGameStore((s) => s.endedAt);
   const stats = useGameStore((s) => s.stats);
-  const duckTarget = useGameStore((s) => s.duckTarget);
+  const gnomeTarget = useGameStore((s) => s.gnomeTarget);
   const reset = useGameStore((s) => s.reset);
-  const spawnDucks = useGameStore((s) => s.spawnDucks);
+  const spawnGnomes = useGameStore((s) => s.spawnGnomes);
   const difficulty = useSettingsStore((s) => s.difficulty);
   const addEntry = useSettingsStore((s) => s.addLeaderboardEntry);
   const leaderboard = useSettingsStore((s) => s.leaderboard);
@@ -62,7 +62,7 @@ export function WinScreen(): React.JSX.Element | null {
     if (sec < 120) unlockAchievement('lightning');
     if (stats.maxCombo >= 5) unlockAchievement('on_fire');
     if (stats.roomsWithHits.size >= 3) unlockAchievement('explorer');
-    if (stats.smallestDuckScale < 0.4) unlockAchievement('mini_hunter');
+    if (stats.smallestGnomeScale < 0.4) unlockAchievement('mini_hunter');
     if (stats.shotsFired > 0 && stats.shotsFired === stats.shotsHit) unlockAchievement('perfect');
     // sharp_eye: 10 hits without miss handled by combo logic (max streak >= 10)
     if (stats.maxCombo >= 10) unlockAchievement('sharp_eye');
@@ -74,7 +74,7 @@ export function WinScreen(): React.JSX.Element | null {
     didProcess.current = false;
     reset();
     const config = getDifficultyConfig(difficulty);
-    spawnDucks(SPAWN_POOL_ALL, config.duckCount);
+    spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
   };
 
   const newAchievements = ACHIEVEMENTS_DEF.filter(
@@ -86,7 +86,7 @@ export function WinScreen(): React.JSX.Element | null {
       <div className="flex max-h-[90vh] w-full max-w-lg flex-col gap-4 overflow-y-auto rounded-2xl border border-white/10 bg-zinc-900/95 p-8 backdrop-blur-xl">
         {/* Title */}
         <h2 className="text-center text-3xl font-bold tracking-tight">
-          ¡Encontraste los {duckTarget}! 🦆
+          ¡Encontraste los {gnomeTarget}! 🧙
         </h2>
 
         {/* Stars */}

@@ -10,7 +10,7 @@ import { getDifficultyConfig } from '@/store/settingsStore';
 export function PauseMenu(): React.JSX.Element | null {
   const status = useGameStore((s) => s.status);
   const reset = useGameStore((s) => s.reset);
-  const spawnDucks = useGameStore((s) => s.spawnDucks);
+  const spawnGnomes = useGameStore((s) => s.spawnGnomes);
   const [paused, setPaused] = useState(false);
   const masterVol = useSettingsStore((s) => s.masterVolume);
   const sfxVol = useSettingsStore((s) => s.sfxVolume);
@@ -34,7 +34,7 @@ export function PauseMenu(): React.JSX.Element | null {
   const handleRestart = (): void => {
     reset();
     const config = getDifficultyConfig(difficulty);
-    spawnDucks(SPAWN_POOL_ALL, config.duckCount);
+    spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
   };
 
   const handleQuit = (): void => {

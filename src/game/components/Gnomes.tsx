@@ -5,31 +5,31 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import { useGameStore } from '@/store/gameStore';
 import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
-import { DuckModel } from '@/game/components/DuckModel';
+import { GnomeModel } from '@/game/components/GnomeModel';
 
 const BOB_AMPLITUDE = 0.025;
 const BOB_FREQ = 1.5;
-const GLOW_DISTANCE = 5; // ducks start glowing within 5m
+const GLOW_DISTANCE = 5; // gnomes start glowing within 5m
 const GLOW_FADE_START = 3; // full glow within 3m
 
-const _duckPos = new Vector3();
+const _gnomePos = new Vector3();
 
-export function Ducks(): React.JSX.Element {
-  const ducks = useGameStore((s) => s.ducks);
-  const spawnDucks = useGameStore((s) => s.spawnDucks);
+export function Gnomes(): React.JSX.Element {
+  const gnomes = useGameStore((s) => s.gnomes);
+  const spawnGnomes = useGameStore((s) => s.spawnGnomes);
   const containerRef = useRef<Group | null>(null);
   const camera = useThree((s) => s.camera);
 
   useEffect(() => {
-    if (ducks.length === 0) {
-      // In Ducks.tsx, we just use the duckTarget from the store if it's already set
+    if (gnomes.length === 0) {
+      // In Gnomes.tsx, we just use the gnomeTarget from the store if it's already set
       // The actual spawn happens in StartButton, but this is a fallback for direct /play loads
       import('@/store/settingsStore').then((m) => {
         const config = m.getDifficultyConfig(m.useSettingsStore.getState().difficulty);
-        spawnDucks(SPAWN_POOL_ALL, config.duckCount);
+        spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
       });
     }
-  }, [ducks.length, spawnDucks]);
+  }, [gnomes.length, spawnGnomes]);
 
   useFrame((state) => {
     const container = containerRef.current;
@@ -40,17 +40,17 @@ export function Ducks(): React.JSX.Element {
 
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
-      const duck = ducks[i];
-      if (!child || !duck) continue;
+      const gnome = gnomes[i];
+      if (!child || !gnome) continue;
 
       // Bob animation
-      const phase = duck.rotation[1];
+      const phase = gnome.rotation[1];
       child.position.y =
-        duck.position[1] + Math.sin(t * BOB_FREQ + phase) * BOB_AMPLITUDE;
+        gnome.position[1] + Math.sin(t * BOB_FREQ + phase) * BOB_AMPLITUDE;
 
       // Proximity glow — update emissive on body mesh
-      _duckPos.set(duck.position[0], duck.position[1], duck.position[2]);
-      const dist = camPos.distanceTo(_duckPos);
+      _gnomePos.set(gnome.position[0], gnome.position[1], gnome.position[2]);
+      const dist = camPos.distanceTo(_gnomePos);
 
       if (dist < GLOW_DISTANCE) {
         const glowIntensity =
@@ -61,7 +61,7 @@ export function Ducks(): React.JSX.Element {
         const pulse = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * 4 + phase));
         const finalGlow = glowIntensity * pulse;
 
-        // Walk the children of the duck group to find body mesh
+        // Walk the children of the gnome group to find body mesh
         child.traverse((obj) => {
           if (obj instanceof Mesh && obj.material instanceof MeshStandardMaterial) {
             obj.material.emissiveIntensity = finalGlow * 0.6;
@@ -81,18 +81,18 @@ export function Ducks(): React.JSX.Element {
 
   return (
     <group ref={containerRef}>
-      {ducks.map((d) => (
+      {gnomes.map((d) => (
         <group
           key={d.id}
           position={d.position}
           rotation={d.rotation}
-          userData={{ duckId: d.id }}
+          userData={{ gnomeId: d.id }}
         >
-          <DuckModel
+          <GnomeModel
             useFallback
             bodyColor={d.bodyColor}
             beakColor={d.beakColor}
-            duckScale={d.scale}
+            gnomeScale={d.scale}
           />
         </group>
       ))}

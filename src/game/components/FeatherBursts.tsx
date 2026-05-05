@@ -69,11 +69,11 @@ function FeatherBurstInstance({ position, color, startedAt }: {
 }
 
 export function FeatherBursts(): React.JSX.Element {
-  const dyingDucks = useGameStore((s) => s.dyingDucks);
+  const dyingGnomes = useGameStore((s) => s.dyingGnomes);
 
   return (
     <group>
-      {dyingDucks.map((d) => (
+      {dyingGnomes.map((d) => (
         <FeatherBurstInstance
           key={d.id}
           position={d.position}

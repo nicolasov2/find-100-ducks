@@ -5,7 +5,7 @@ import { useThree } from '@react-three/fiber';
 import { Raycaster, Vector3 } from 'three';
 import type { Object3D } from 'three';
 import { useGameStore } from '@/store/gameStore';
-import { playLaserShot, playDuckHit, initAudio } from '@/game/systems/AudioManager';
+import { playLaserShot, playGnomeHit, initAudio } from '@/game/systems/AudioManager';
 
 const RAY_ORIGIN = new Vector3();
 const RAY_DIR = new Vector3();
@@ -21,10 +21,10 @@ const EMITTER_DOWN = 0.22;
 const EMITTER_FORWARD = 0.81;
 const FALLBACK_DISTANCE = 50;
 
-function findDuckId(start: Object3D | null): string | null {
+function findGnomeId(start: Object3D | null): string | null {
   let curr: Object3D | null = start;
   while (curr !== null) {
-    const id = curr.userData['duckId'];
+    const id = curr.userData['gnomeId'];
     if (typeof id === 'string') return id;
     curr = curr.parent;
   }
@@ -70,7 +70,7 @@ export function Shooter(): null {
           at: Date.now(),
           beamFrom,
           beamTo: [HIT_FALLBACK.x, HIT_FALLBACK.y, HIT_FALLBACK.z],
-          deadDuck: null,
+          deadGnome: null,
         });
         return;
       }
@@ -80,21 +80,21 @@ export function Shooter(): null {
         first.point.y,
         first.point.z,
       ];
-      const duckId = findDuckId(first.object);
-      const deadDuck =
-        duckId !== null
-          ? (state.ducks.find((d) => d.id === duckId) ?? null)
+      const gnomeId = findGnomeId(first.object);
+      const deadGnome =
+        gnomeId !== null
+          ? (state.gnomes.find((d) => d.id === gnomeId) ?? null)
           : null;
 
-      if (deadDuck) {
-        playDuckHit();
+      if (deadGnome) {
+        playGnomeHit();
       }
 
       state.triggerShot({
         at: Date.now(),
         beamFrom,
         beamTo,
-        deadDuck,
+        deadGnome,
       });
     };
 

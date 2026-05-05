@@ -20,10 +20,10 @@ export interface Achievement {
 
 export const ACHIEVEMENTS_DEF: readonly Omit<Achievement, 'unlocked'>[] = [
   { id: 'speed_runner', title: 'Speed Runner', icon: '🏃', description: 'Terminar en menos de 3 min' },
-  { id: 'sharp_eye', title: 'Ojo de Águila', icon: '🔫', description: '10 patos sin fallar' },
-  { id: 'on_fire', title: 'En Llamas', icon: '🔥', description: 'Combo de 5 patos seguidos' },
-  { id: 'explorer', title: 'Explorador', icon: '🔍', description: 'Encontrar patos en las 3 salas' },
-  { id: 'mini_hunter', title: 'Mini Hunter', icon: '👶', description: 'Encontrar un pato escala < 0.4' },
+  { id: 'sharp_eye', title: 'Ojo de Águila', icon: '🔫', description: '10 gnomos sin fallar' },
+  { id: 'on_fire', title: 'En Llamas', icon: '🔥', description: 'Combo de 5 gnomos seguidos' },
+  { id: 'explorer', title: 'Explorador', icon: '🔍', description: 'Encontrar gnomos en las 3 salas' },
+  { id: 'mini_hunter', title: 'Mini Hunter', icon: '👶', description: 'Encontrar un gnomo escala < 0.4' },
   { id: 'perfect', title: 'Perfecto', icon: '🎯', description: '0 disparos fallidos' },
   { id: 'lightning', title: 'Lightning', icon: '⚡', description: 'Terminar en menos de 2 min' },
 ];
@@ -104,8 +104,8 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 /* Difficulty presets */
 export function getDifficultyConfig(d: Difficulty) {
   switch (d) {
-    case 'easy': return { duckCount: 150, glowDistance: 8, glowFadeStart: 5, scaleMin: 0.5 };
-    case 'normal': return { duckCount: 100, glowDistance: 5, glowFadeStart: 3, scaleMin: 0.35 };
-    case 'hard': return { duckCount: 100, glowDistance: 0, glowFadeStart: 0, scaleMin: 0.25 };
+    case 'easy': return { gnomeCount: 150, glowDistance: 8, glowFadeStart: 5, scaleMin: 0.5 };
+    case 'normal': return { gnomeCount: 100, glowDistance: 5, glowFadeStart: 3, scaleMin: 0.35 };
+    case 'hard': return { gnomeCount: 100, glowDistance: 0, glowFadeStart: 0, scaleMin: 0.25 };
   }
 }

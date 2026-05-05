@@ -67,8 +67,8 @@ export function playLaserShot(): void {
   osc.stop(now + 0.15);
 }
 
-/* ── Duck hit (pop + quack) ── */
-export function playDuckHit(): void {
+/* ── Gnome hit (pop + quack) ── */
+export function playGnomeHit(): void {
   const c = getCtx();
   if (!sfxGain) return;
   const now = c.currentTime;

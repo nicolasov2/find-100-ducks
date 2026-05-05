@@ -9,7 +9,7 @@ export interface SpawnPoint {
   readonly roomId: RoomId;
 }
 
-export interface Duck {
+export interface Gnome {
   readonly id: string;
   readonly spawnPointId: string;
   readonly position: Vector3Tuple;
@@ -19,7 +19,7 @@ export interface Duck {
   readonly beakColor: string;
 }
 
-export interface DyingDuck {
+export interface DyingGnome {
   readonly id: string;
   readonly position: Vector3Tuple;
   readonly rotation: Vector3Tuple;

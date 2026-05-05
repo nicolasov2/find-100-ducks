@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Find 100 Ducks 🦆 — 3D Duck Hunt",
-  description: "Encuentra los 100 patitos escondidos en las habitaciones. Un juego 3D con láser y patitos de colores.",
+  title: "Find 100 Gnomes — 3D Gnome Hunt",
+  description: "Encuentra los 100 gnomos escondidos en las habitaciones. Un juego 3D con láser y gnomos de colores.",
 };
 
 export default function RootLayout({

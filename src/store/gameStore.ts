@@ -2,13 +2,13 @@ import { create } from 'zustand';
 import type { Vector3Tuple } from 'three';
 import type {
   BeamShot,
-  Duck,
-  DyingDuck,
+  Gnome,
+  DyingGnome,
   GameStatus,
   SpawnPoint,
 } from '@/game/types';
 import { shuffled } from '@/game/utils/shuffle';
-import { randomPalette, randomScale } from '@/game/utils/duckPalettes';
+import { randomPalette, randomScale } from '@/game/utils/gnomePalettes';
 
 export const BEAM_DURATION_MS = 90;
 export const DEATH_DURATION_MS = 380;
@@ -18,7 +18,7 @@ export interface ShotInput {
   at: number;
   beamFrom: Vector3Tuple;
   beamTo: Vector3Tuple;
-  deadDuck: Duck | null;
+  deadGnome: Gnome | null;
 }
 
 export interface GameStats {
@@ -28,14 +28,14 @@ export interface GameStats {
   maxCombo: number;
   lastHitAt: number;
   roomsWithHits: Set<string>;
-  smallestDuckScale: number;
+  smallestGnomeScale: number;
 }
 
 export interface GameState {
   status: GameStatus;
-  duckTarget: number;
-  ducks: readonly Duck[];
-  dyingDucks: readonly DyingDuck[];
+  gnomeTarget: number;
+  gnomes: readonly Gnome[];
+  dyingGnomes: readonly DyingGnome[];
   beams: readonly BeamShot[];
   startedAt: number | null;
   endedAt: number | null;
@@ -44,7 +44,7 @@ export interface GameState {
   hitFlash: boolean;
   comboDisplay: number;
   setStatus: (status: GameStatus) => void;
-  spawnDucks: (pool: readonly SpawnPoint[], count: number) => void;
+  spawnGnomes: (pool: readonly SpawnPoint[], count: number) => void;
   triggerShot: (input: ShotInput) => void;
   purgeExpiredEffects: (now: number) => void;
   clearHitFlash: () => void;
@@ -61,14 +61,14 @@ const emptyStats = (): GameStats => ({
   maxCombo: 0,
   lastHitAt: 0,
   roomsWithHits: new Set(),
-  smallestDuckScale: 999,
+  smallestGnomeScale: 999,
 });
 
 export const useGameStore = create<GameState>((set) => ({
   status: 'menu',
-  duckTarget: 100,
-  ducks: [],
-  dyingDucks: [],
+  gnomeTarget: 100,
+  gnomes: [],
+  dyingGnomes: [],
   beams: [],
   startedAt: null,
   endedAt: null,
@@ -77,13 +77,13 @@ export const useGameStore = create<GameState>((set) => ({
   hitFlash: false,
   comboDisplay: 0,
   setStatus: (status) => set({ status }),
-  spawnDucks: (pool, count = 100) =>
+  spawnGnomes: (pool, count = 100) =>
     set(() => {
       const picked = shuffled(pool).slice(0, count);
-      const ducks: Duck[] = picked.map((sp, i) => {
+      const gnomes: Gnome[] = picked.map((sp, i) => {
         const palette = randomPalette();
         return {
-          id: `duck-${String(i).padStart(3, '0')}`,
+          id: `gnome-${String(i).padStart(3, '0')}`,
           spawnPointId: sp.id,
           position: [sp.position[0], sp.position[1], sp.position[2]],
           rotation: [0, Math.random() * Math.PI * 2, 0],
@@ -93,9 +93,9 @@ export const useGameStore = create<GameState>((set) => ({
         };
       });
       return {
-        ducks,
-        duckTarget: count,
-        dyingDucks: [],
+        gnomes,
+        gnomeTarget: count,
+        dyingGnomes: [],
         beams: [],
         status: 'playing',
         startedAt: Date.now(),
@@ -106,7 +106,7 @@ export const useGameStore = create<GameState>((set) => ({
         comboDisplay: 0,
       };
     }),
-  triggerShot: ({ at, beamFrom, beamTo, deadDuck }) =>
+  triggerShot: ({ at, beamFrom, beamTo, deadGnome }) =>
     set((state) => {
       const beam: BeamShot = {
         id: nextBeamId(),
@@ -118,7 +118,7 @@ export const useGameStore = create<GameState>((set) => ({
       const newStats = { ...state.stats };
       newStats.shotsFired += 1;
 
-      if (deadDuck === null) {
+      if (deadGnome === null) {
         newStats.currentStreak = 0;
         return { beams, lastShotAt: at, stats: newStats, comboDisplay: 0 };
       }
@@ -137,31 +137,31 @@ export const useGameStore = create<GameState>((set) => ({
       newStats.lastHitAt = at;
 
       // Room tracking
-      const roomId = deadDuck.spawnPointId.split('-')[0] ?? '';
+      const roomId = deadGnome.spawnPointId.split('-')[0] ?? '';
       if (roomId.startsWith('r')) {
         newStats.roomsWithHits.add(roomId);
       }
 
-      // Smallest duck
-      if (deadDuck.scale < newStats.smallestDuckScale) {
-        newStats.smallestDuckScale = deadDuck.scale;
+      // Smallest gnome
+      if (deadGnome.scale < newStats.smallestGnomeScale) {
+        newStats.smallestGnomeScale = deadGnome.scale;
       }
 
-      const ducks = state.ducks.filter((d) => d.id !== deadDuck.id);
-      const dying: DyingDuck = {
-        id: deadDuck.id,
-        position: deadDuck.position,
-        rotation: deadDuck.rotation,
-        scale: deadDuck.scale,
-        bodyColor: deadDuck.bodyColor,
-        beakColor: deadDuck.beakColor,
+      const gnomes = state.gnomes.filter((d) => d.id !== deadGnome.id);
+      const dying: DyingGnome = {
+        id: deadGnome.id,
+        position: deadGnome.position,
+        rotation: deadGnome.rotation,
+        scale: deadGnome.scale,
+        bodyColor: deadGnome.bodyColor,
+        beakColor: deadGnome.beakColor,
         startedAt: at,
       };
-      const dyingDucks = [...state.dyingDucks, dying];
-      const won = ducks.length === 0 && state.endedAt === null;
+      const dyingGnomes = [...state.dyingGnomes, dying];
+      const won = gnomes.length === 0 && state.endedAt === null;
       return {
-        ducks,
-        dyingDucks,
+        gnomes,
+        dyingGnomes,
         beams,
         lastShotAt: at,
         stats: newStats,
@@ -175,22 +175,22 @@ export const useGameStore = create<GameState>((set) => ({
       const beams = state.beams.filter(
         (b) => now - b.startedAt < BEAM_DURATION_MS,
       );
-      const dyingDucks = state.dyingDucks.filter(
+      const dyingGnomes = state.dyingGnomes.filter(
         (d) => now - d.startedAt < DEATH_DURATION_MS,
       );
       if (
         beams.length === state.beams.length &&
-        dyingDucks.length === state.dyingDucks.length
+        dyingGnomes.length === state.dyingGnomes.length
       ) {
         return state;
       }
-      return { beams, dyingDucks };
+      return { beams, dyingGnomes };
     }),
   clearHitFlash: () => set({ hitFlash: false }),
   reset: () =>
     set({
-      ducks: [],
-      dyingDucks: [],
+      gnomes: [],
+      dyingGnomes: [],
       beams: [],
       status: 'menu',
       startedAt: null,

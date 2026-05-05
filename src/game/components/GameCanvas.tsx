@@ -6,8 +6,8 @@ import { PointerLockControls } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
 import { Player } from '@/game/components/Player';
 import { LockOverlay } from '@/game/components/LockOverlay';
-import { Ducks } from '@/game/components/Ducks';
-import { DyingDucks } from '@/game/components/DyingDucks';
+import { Gnomes } from '@/game/components/Gnomes';
+import { DyingGnomes } from '@/game/components/DyingGnomes';
 import { FeatherBursts } from '@/game/components/FeatherBursts';
 import { LaserBeams } from '@/game/components/LaserBeams';
 import { Shooter } from '@/game/components/Shooter';
@@ -62,8 +62,8 @@ export function GameCanvas(): React.JSX.Element {
             <Player />
           </Physics>
           <DustMotes />
-          <Ducks />
-          <DyingDucks />
+          <Gnomes />
+          <DyingGnomes />
           <FeatherBursts />
           <LaserBeams />
           <Shooter />

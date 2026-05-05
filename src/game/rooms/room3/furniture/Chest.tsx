@@ -8,7 +8,7 @@ export interface ChestProps {
   rotationY?: number;
 }
 
-/** Wooden storage chest — ducks hide inside */
+/** Wooden storage chest — gnomes hide inside */
 export function Chest({ position, rotationY = 0 }: ChestProps): React.JSX.Element {
   return (
     <group position={position} rotation={[0, rotationY, 0]}>

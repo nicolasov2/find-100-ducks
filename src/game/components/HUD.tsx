@@ -15,13 +15,13 @@ export function HUD(): React.JSX.Element {
   const status = useGameStore((s) => s.status);
   const startedAt = useGameStore((s) => s.startedAt);
   const endedAt = useGameStore((s) => s.endedAt);
-  const remaining = useGameStore((s) => s.ducks.length);
-  const duckTarget = useGameStore((s) => s.duckTarget);
+  const remaining = useGameStore((s) => s.gnomes.length);
+  const gnomeTarget = useGameStore((s) => s.gnomeTarget);
   const lastShotAt = useGameStore((s) => s.lastShotAt);
   const hitFlash = useGameStore((s) => s.hitFlash);
   const clearHitFlash = useGameStore((s) => s.clearHitFlash);
   const comboDisplay = useGameStore((s) => s.comboDisplay);
-  const found = duckTarget - remaining;
+  const found = gnomeTarget - remaining;
 
   const [now, setNow] = useState<number>(0);
   const [shotAnim, setShotAnim] = useState(false);
@@ -95,10 +95,10 @@ export function HUD(): React.JSX.Element {
       className="pointer-events-none absolute inset-0 select-none text-white"
       style={{ transform: `translate(${shake.x}px, ${shake.y}px)` }}
     >
-      {/* Duck counter */}
+      {/* Gnome counter */}
       <div className="absolute left-4 top-4 flex items-center gap-2">
         <div className="rounded-lg bg-black/60 px-3 py-1.5 font-mono text-sm tracking-wide backdrop-blur-sm">
-          🦆 {found.toString().padStart(3, '0')} / {duckTarget}
+          🧙 {found.toString().padStart(3, '0')} / {gnomeTarget}
         </div>
       </div>
 
@@ -162,11 +162,11 @@ export function HUD(): React.JSX.Element {
         <div className="h-1.5 overflow-hidden rounded-full bg-white/10 backdrop-blur-sm">
           <div
             className="h-full rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 transition-all duration-300"
-            style={{ width: `${(found / duckTarget) * 100}%` }}
+            style={{ width: `${(found / gnomeTarget) * 100}%` }}
           />
         </div>
         <div className="mt-1 text-center font-mono text-xs text-white/50">
-          {Math.round((found / duckTarget) * 100)}%
+          {Math.round((found / gnomeTarget) * 100)}%
         </div>
       </div>
     </div>

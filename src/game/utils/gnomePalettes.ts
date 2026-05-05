@@ -1,10 +1,10 @@
-/** Color palettes for duck variety — each entry has body + beak colors. */
-export interface DuckPalette {
+/** Color palettes for gnome variety — each entry has body + beak colors. */
+export interface GnomePalette {
   readonly bodyColor: string;
   readonly beakColor: string;
 }
 
-export const DUCK_PALETTES: readonly DuckPalette[] = [
+export const GNOME_PALETTES: readonly GnomePalette[] = [
   { bodyColor: '#fbbf24', beakColor: '#f59e0b' },  // classic yellow
   { bodyColor: '#f9fafb', beakColor: '#fb923c' },  // white
   { bodyColor: '#f9a8d4', beakColor: '#ec4899' },  // pink
@@ -15,15 +15,15 @@ export const DUCK_PALETTES: readonly DuckPalette[] = [
   { bodyColor: '#d4a574', beakColor: '#92400e' },  // brown
 ];
 
-export const DUCK_SCALE_MIN = 0.35;
-export const DUCK_SCALE_MAX = 1.3;
+export const GNOME_SCALE_MIN = 0.35;
+export const GNOME_SCALE_MAX = 1.3;
 
-export function randomPalette(): DuckPalette {
-  return DUCK_PALETTES[Math.floor(Math.random() * DUCK_PALETTES.length)]!;
+export function randomPalette(): GnomePalette {
+  return GNOME_PALETTES[Math.floor(Math.random() * GNOME_PALETTES.length)]!;
 }
 
 /**
- * Biased toward smaller ducks:
+ * Biased toward smaller gnomes:
  * 40% → tiny (0.35–0.55)
  * 35% → small (0.55–0.8)
  * 20% → medium (0.8–1.1)

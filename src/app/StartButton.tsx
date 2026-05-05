@@ -10,12 +10,12 @@ import { startMusic } from '@/game/systems/AudioManager';
 export function StartButton(): React.JSX.Element {
   const difficulty = useSettingsStore((s) => s.difficulty);
   const setDifficulty = useSettingsStore((s) => s.setDifficulty);
-  const spawnDucks = useGameStore((s) => s.spawnDucks);
+  const spawnGnomes = useGameStore((s) => s.spawnGnomes);
   const [showOptions, setShowOptions] = useState(false);
 
   const handlePlay = () => {
     const config = getDifficultyConfig(difficulty);
-    spawnDucks(SPAWN_POOL_ALL, config.duckCount);
+    spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
     startMusic();
   };
 
@@ -61,9 +61,9 @@ export function StartButton(): React.JSX.Element {
         )}
       </div>
       
-      {showOptions && difficulty === 'easy' && <p className="text-xs text-zinc-500">150 patos, glow a 8 metros. Patos más grandes.</p>}
-      {showOptions && difficulty === 'normal' && <p className="text-xs text-zinc-500">100 patos, glow a 5 metros.</p>}
-      {showOptions && difficulty === 'hard' && <p className="text-xs text-zinc-500">100 patos, SIN glow. Patos más pequeños.</p>}
+      {showOptions && difficulty === 'easy' && <p className="text-xs text-zinc-500">150 gnomos, glow a 8 metros. Gnomos más grandes.</p>}
+      {showOptions && difficulty === 'normal' && <p className="text-xs text-zinc-500">100 gnomos, glow a 5 metros.</p>}
+      {showOptions && difficulty === 'hard' && <p className="text-xs text-zinc-500">100 gnomos, SIN glow. Gnomos más pequeños.</p>}
     </div>
   );
 }

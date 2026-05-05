@@ -11,14 +11,14 @@ export default function Home(): React.JSX.Element {
         {/* Title Area */}
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center justify-center space-x-2 text-6xl">
-            <span className="animate-bounce">🦆</span>
+            <span className="animate-bounce">🧙</span>
             <h1 className="font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-yellow-300 to-amber-600">
-              Find 100 Ducks
+              Find 100 Gnomes
             </h1>
-            <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>🦆</span>
+            <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>🧙</span>
           </div>
           <p className="max-w-lg text-lg text-zinc-400">
-            Explora las habitaciones, usa tu linterna y dispara a los 100 patitos de goma escondidos lo más rápido que puedas.
+            Explora las habitaciones, usa tu linterna y dispara a los 100 gnomos de goma escondidos lo más rápido que puedas.
           </p>
         </div>
 
