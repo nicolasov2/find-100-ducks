@@ -72,10 +72,11 @@ export function WinScreen(): React.JSX.Element | null {
     // sharp_eye: 10 hits without miss handled by combo logic (max streak >= 10)
     if (stats.maxCombo >= 10) unlockAchievement('sharp_eye');
 
-    // Award EXP and check weapon unlocks
-    if (stats.totalExpGained > 0) {
-      addExp(stats.totalExpGained);
-      const newTotal = totalExp + stats.totalExpGained;
+    // Award EXP (net of in-match hint spending) and check weapon unlocks
+    const netExp = Math.max(0, stats.totalExpGained - stats.expSpent);
+    if (netExp > 0) {
+      addExp(netExp);
+      const newTotal = totalExp + netExp;
       const candidates = [
         { id: 'laser-rifle', threshold: 200 },
         { id: 'laser-sniper', threshold: 500 },
@@ -157,8 +158,17 @@ export function WinScreen(): React.JSX.Element | null {
         {/* EXP earned */}
         <div className="rounded-xl bg-amber-400/10 p-3 text-center">
           <p className="text-xs uppercase tracking-widest text-amber-300">EXP ganado</p>
-          <p className="mt-1 font-mono text-2xl font-bold text-amber-300">+{stats.totalExpGained}</p>
-          <p className="mt-1 text-xs text-zinc-400">Total acumulado: {totalExp + stats.totalExpGained}</p>
+          <p className="mt-1 font-mono text-2xl font-bold text-amber-300">
+            +{Math.max(0, stats.totalExpGained - stats.expSpent)}
+          </p>
+          {stats.expSpent > 0 && (
+            <p className="mt-0.5 text-xs text-zinc-500">
+              ({stats.totalExpGained} ganado − {stats.expSpent} en pistas)
+            </p>
+          )}
+          <p className="mt-1 text-xs text-zinc-400">
+            Wallet acumulado: {totalExp + Math.max(0, stats.totalExpGained - stats.expSpent)}
+          </p>
         </div>
 
         {/* New weapons unlocked */}

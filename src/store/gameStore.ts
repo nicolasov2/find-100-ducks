@@ -46,6 +46,7 @@ export interface GameStats {
   roomsWithHits: Set<string>;
   smallestGnomeScale: number;
   totalExpGained: number;
+  expSpent: number;
 }
 
 export interface GameState {
@@ -66,6 +67,7 @@ export interface GameState {
   setStatus: (status: GameStatus) => void;
   setCurrentWeapon: (id: WeaponId) => void;
   triggerHint: () => void;
+  spendGameExp: (amount: number) => boolean;
   spawnGnomes: (pool: readonly SpawnPoint[], count: number) => void;
   triggerShot: (input: ShotInput) => void;
   purgeExpiredEffects: (now: number) => void;
@@ -87,6 +89,7 @@ const emptyStats = (): GameStats => ({
   roomsWithHits: new Set(),
   smallestGnomeScale: 999,
   totalExpGained: 0,
+  expSpent: 0,
 });
 
 export const useGameStore = create<GameState>((set) => ({
@@ -107,6 +110,16 @@ export const useGameStore = create<GameState>((set) => ({
   setStatus: (status) => set({ status }),
   setCurrentWeapon: (id) => set({ currentWeaponId: id }),
   triggerHint: () => set({ hintActivatedAt: Date.now() }),
+  spendGameExp: (amount) => {
+    let ok = false;
+    set((state) => {
+      const available = state.stats.totalExpGained - state.stats.expSpent;
+      if (available < amount) return state;
+      ok = true;
+      return { stats: { ...state.stats, expSpent: state.stats.expSpent + amount } };
+    });
+    return ok;
+  },
   spawnGnomes: (pool, count = 100) =>
     set(() => {
       const picked = shuffled(pool).slice(0, count);

@@ -23,10 +23,12 @@ export function HUD(): React.JSX.Element {
   const clearHitFlash = useGameStore((s) => s.clearHitFlash);
   const comboDisplay = useGameStore((s) => s.comboDisplay);
   const totalExpGained = useGameStore((s) => s.stats.totalExpGained);
+  const expSpent = useGameStore((s) => s.stats.expSpent);
   const totalExp = useSettingsStore((s) => s.totalExp);
+  const availableExp = totalExpGained - expSpent;
   const found = gnomeTarget - remaining;
   const comboMult = getComboMultiplier(comboDisplay);
-  const canAffordHint = totalExp >= HINT_EXP_COST;
+  const canAffordHint = availableExp >= HINT_EXP_COST;
 
   const [now, setNow] = useState<number>(0);
   const [shotAnim, setShotAnim] = useState(false);
@@ -157,10 +159,13 @@ export function HUD(): React.JSX.Element {
         </div>
       )}
 
-      {/* EXP earned this game + total wallet */}
+      {/* EXP earned this game (available wallet during match) + persistent total */}
       <div className="absolute left-4 top-24 flex flex-col gap-1">
         <div className="rounded bg-black/50 px-2 py-1 text-xs backdrop-blur-sm">
-          ⭐ +{totalExpGained} EXP <span className="text-zinc-400">· total {totalExp}</span>
+          🪙 {availableExp} EXP <span className="text-zinc-400">· ganado +{totalExpGained}</span>
+        </div>
+        <div className="rounded bg-black/30 px-2 py-0.5 text-[10px] text-zinc-400 backdrop-blur-sm">
+          Wallet: {totalExp} EXP
         </div>
       </div>
 

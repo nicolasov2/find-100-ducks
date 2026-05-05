@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { HINT_EXP_COST, useGameStore } from '@/store/gameStore';
-import { useSettingsStore } from '@/store/settingsStore';
 
 const COOLDOWN_MS = 1500;
 
@@ -16,7 +15,7 @@ export function HintHotkey(): null {
       if (game.status !== 'playing') return;
       const now = Date.now();
       if (now - lastUsedAt < COOLDOWN_MS) return;
-      const ok = useSettingsStore.getState().spendExp(HINT_EXP_COST);
+      const ok = game.spendGameExp(HINT_EXP_COST);
       if (!ok) return;
       lastUsedAt = now;
       game.triggerHint();
