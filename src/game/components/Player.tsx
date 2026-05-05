@@ -20,7 +20,7 @@ const CAPSULE_RADIUS = 0.4;
 const CAPSULE_HALF_TOTAL = CAPSULE_HALF_HEIGHT + CAPSULE_RADIUS;
 const GROUND_RAY_TOI_MAX = CAPSULE_HALF_TOTAL + 0.1;
 const GROUND_RAY_TOI_THRESHOLD = CAPSULE_HALF_TOTAL + 0.05;
-const SPAWN: readonly [number, number, number] = [0, 1.5, 0];
+const SPAWN: readonly [number, number, number] = [-6, 1.7, 0];
 
 const forwardVec = new Vector3();
 const rightVec = new Vector3();
