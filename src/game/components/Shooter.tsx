@@ -33,6 +33,15 @@ function findGnomeId(start: Object3D | null): string | null {
   return null;
 }
 
+function shouldIgnore(start: Object3D | null): boolean {
+  let curr: Object3D | null = start;
+  while (curr !== null) {
+    if (curr.userData['raycastIgnore'] === true) return true;
+    curr = curr.parent;
+  }
+  return false;
+}
+
 export function Shooter(): null {
   const camera = useThree((s) => s.camera);
   const scene = useThree((s) => s.scene);
@@ -84,7 +93,13 @@ export function Shooter(): null {
         raycaster.set(RAY_ORIGIN, SHOT_DIR);
         raycaster.far = weapon.range;
         const hits = raycaster.intersectObjects(scene.children, true);
-        const first = hits[0];
+        let first = undefined;
+        for (const h of hits) {
+          if (!shouldIgnore(h.object)) {
+            first = h;
+            break;
+          }
+        }
 
         if (first === undefined) {
           HIT_POS.copy(RAY_ORIGIN).addScaledVector(SHOT_DIR, weapon.range);

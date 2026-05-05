@@ -20,7 +20,7 @@ export function ExpPopups(): React.JSX.Element {
   const popups = useGameStore((s) => s.expPopups);
 
   return (
-    <group>
+    <group userData={{ raycastIgnore: true }}>
       {popups.map((p) => (
         <ExpPopupSprite key={p.id} popup={p} />
       ))}

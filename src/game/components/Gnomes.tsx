@@ -3,7 +3,11 @@
 import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
-import { useGameStore } from '@/store/gameStore';
+import {
+  HINT_AUTO_GLOW_THRESHOLD,
+  HINT_DURATION_MS,
+  useGameStore,
+} from '@/store/gameStore';
 import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
 import { GnomeModel } from '@/game/components/GnomeModel';
 
@@ -17,6 +21,7 @@ const _gnomePos = new Vector3();
 export function Gnomes(): React.JSX.Element {
   const gnomes = useGameStore((s) => s.gnomes);
   const spawnGnomes = useGameStore((s) => s.spawnGnomes);
+  const hintActivatedAt = useGameStore((s) => s.hintActivatedAt);
   const containerRef = useRef<Group | null>(null);
   const camera = useThree((s) => s.camera);
 
@@ -37,6 +42,11 @@ export function Gnomes(): React.JSX.Element {
     const t = state.clock.elapsedTime;
     const children = container.children;
     const camPos = camera.position;
+    const now = Date.now();
+    const hintActive =
+      hintActivatedAt !== null && now - hintActivatedAt < HINT_DURATION_MS;
+    const autoGlow = gnomes.length <= HINT_AUTO_GLOW_THRESHOLD;
+    const showAll = hintActive || autoGlow;
 
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
@@ -48,34 +58,38 @@ export function Gnomes(): React.JSX.Element {
       child.position.y =
         gnome.position[1] + Math.sin(t * BOB_FREQ + phase) * BOB_AMPLITUDE;
 
-      // Proximity glow — update emissive on body mesh
+      // Proximity / hint glow
       _gnomePos.set(gnome.position[0], gnome.position[1], gnome.position[2]);
       const dist = camPos.distanceTo(_gnomePos);
+      let intensity = 0;
+      let emissiveHex = 0xfef3c7;
 
-      if (dist < GLOW_DISTANCE) {
+      if (showAll) {
+        // Hint or auto-glow when few left → pulsing strong glow regardless of distance
+        const pulse = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(t * 5 + phase));
+        intensity = pulse * 1.5;
+        emissiveHex = hintActive ? 0x22d3ee : 0xfbbf24;
+      } else if (dist < GLOW_DISTANCE) {
         const glowIntensity =
           dist < GLOW_FADE_START
             ? 1
             : 1 - (dist - GLOW_FADE_START) / (GLOW_DISTANCE - GLOW_FADE_START);
-        // Pulsing glow
         const pulse = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * 4 + phase));
-        const finalGlow = glowIntensity * pulse;
-
-        // Walk the children of the gnome group to find body mesh
-        child.traverse((obj) => {
-          if (obj instanceof Mesh && obj.material instanceof MeshStandardMaterial) {
-            obj.material.emissiveIntensity = finalGlow * 0.6;
-            obj.material.emissive.setHex(0xfef3c7);
-          }
-        });
-      } else {
-        // Reset emissive when far
-        child.traverse((obj) => {
-          if (obj instanceof Mesh && obj.material instanceof MeshStandardMaterial) {
-            obj.material.emissiveIntensity = 0;
-          }
-        });
+        intensity = glowIntensity * pulse * 0.6;
       }
+
+      child.traverse((obj) => {
+        if (obj instanceof Mesh && obj.material instanceof MeshStandardMaterial) {
+          obj.material.emissiveIntensity = intensity;
+          obj.material.emissive.setHex(emissiveHex);
+          obj.material.depthTest = !hintActive;
+          if (hintActive) {
+            obj.renderOrder = 999;
+          } else {
+            obj.renderOrder = 0;
+          }
+        }
+      });
     }
   });
 

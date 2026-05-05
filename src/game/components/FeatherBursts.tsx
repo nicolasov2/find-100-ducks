@@ -61,7 +61,7 @@ function FeatherBurstInstance({ position, color, startedAt }: {
   _color.set(color);
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, FEATHER_COUNT]}>
+    <instancedMesh ref={meshRef} args={[undefined, undefined, FEATHER_COUNT]} userData={{ raycastIgnore: true }}>
       <tetrahedronGeometry args={[1, 0]} />
       <meshStandardMaterial color={_color} transparent opacity={0.8} />
     </instancedMesh>
@@ -72,7 +72,7 @@ export function FeatherBursts(): React.JSX.Element {
   const dyingGnomes = useGameStore((s) => s.dyingGnomes);
 
   return (
-    <group>
+    <group userData={{ raycastIgnore: true }}>
       {dyingGnomes.map((d) => (
         <FeatherBurstInstance
           key={d.id}

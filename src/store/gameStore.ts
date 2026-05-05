@@ -16,6 +16,8 @@ export const BEAM_DURATION_MS = 90;
 export const DEATH_DURATION_MS = 380;
 export const EXP_POPUP_DURATION_MS = 900;
 export const EXP_BASE = 5;
+export const HINT_DURATION_MS = 2500;
+export const HINT_AUTO_GLOW_THRESHOLD = 10;
 const COMBO_WINDOW_MS = 5000;
 const COMBO_MULTIPLIERS = [1.0, 1.4, 1.8, 2.0, 2.4, 2.8, 3.0] as const;
 
@@ -59,8 +61,10 @@ export interface GameState {
   hitFlash: boolean;
   comboDisplay: number;
   currentWeaponId: WeaponId;
+  hintActivatedAt: number | null;
   setStatus: (status: GameStatus) => void;
   setCurrentWeapon: (id: WeaponId) => void;
+  triggerHint: () => void;
   spawnGnomes: (pool: readonly SpawnPoint[], count: number) => void;
   triggerShot: (input: ShotInput) => void;
   purgeExpiredEffects: (now: number) => void;
@@ -98,8 +102,10 @@ export const useGameStore = create<GameState>((set) => ({
   hitFlash: false,
   comboDisplay: 0,
   currentWeaponId: 'laser-pistol',
+  hintActivatedAt: null,
   setStatus: (status) => set({ status }),
   setCurrentWeapon: (id) => set({ currentWeaponId: id }),
+  triggerHint: () => set({ hintActivatedAt: Date.now() }),
   spawnGnomes: (pool, count = 100) =>
     set(() => {
       const picked = shuffled(pool).slice(0, count);
@@ -129,6 +135,7 @@ export const useGameStore = create<GameState>((set) => ({
         stats: emptyStats(),
         hitFlash: false,
         comboDisplay: 0,
+        hintActivatedAt: null,
       };
     }),
   triggerShot: ({ at, beamFrom, beamTo, beamColor, beamRadius, deadGnome }) =>
@@ -247,5 +254,6 @@ export const useGameStore = create<GameState>((set) => ({
       stats: emptyStats(),
       hitFlash: false,
       comboDisplay: 0,
+      hintActivatedAt: null,
     }),
 }));

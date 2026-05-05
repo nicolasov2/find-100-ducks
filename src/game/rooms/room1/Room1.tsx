@@ -32,6 +32,8 @@ const ARCHWAY_HALF_W = ARCHWAY_WIDTH / 2;
 
 /* East wall is split into 2 segments + lintel above archway */
 const EAST_SEG_LENGTH = (ROOM_SIZE - ARCHWAY_WIDTH) / 2;
+/* South wall — same archway layout (leads to garden) */
+const SOUTH_SEG_LENGTH = EAST_SEG_LENGTH;
 
 export function Room1(): React.JSX.Element {
   return (
@@ -47,9 +49,17 @@ export function Room1(): React.JSX.Element {
           <boxGeometry args={[ROOM_SIZE, WALL_HEIGHT, WALL_THICKNESS]} />
           <meshStandardMaterial color={WALL_COLOR} />
         </mesh>
-        {/* South wall */}
-        <mesh position={[0, WALL_HEIGHT / 2, HALF]} receiveShadow>
-          <boxGeometry args={[ROOM_SIZE, WALL_HEIGHT, WALL_THICKNESS]} />
+        {/* South wall — split for archway to garden */}
+        <mesh position={[-(ARCHWAY_HALF_W + SOUTH_SEG_LENGTH / 2), WALL_HEIGHT / 2, HALF]} receiveShadow>
+          <boxGeometry args={[SOUTH_SEG_LENGTH, WALL_HEIGHT, WALL_THICKNESS]} />
+          <meshStandardMaterial color={WALL_COLOR} />
+        </mesh>
+        <mesh position={[ARCHWAY_HALF_W + SOUTH_SEG_LENGTH / 2, WALL_HEIGHT / 2, HALF]} receiveShadow>
+          <boxGeometry args={[SOUTH_SEG_LENGTH, WALL_HEIGHT, WALL_THICKNESS]} />
+          <meshStandardMaterial color={WALL_COLOR} />
+        </mesh>
+        <mesh position={[0, ARCHWAY_HEIGHT + (WALL_HEIGHT - ARCHWAY_HEIGHT) / 2, HALF]} receiveShadow>
+          <boxGeometry args={[ARCHWAY_WIDTH, WALL_HEIGHT - ARCHWAY_HEIGHT, WALL_THICKNESS]} />
           <meshStandardMaterial color={WALL_COLOR} />
         </mesh>
         {/* West wall */}

@@ -75,7 +75,7 @@ export function DustMotes(): React.JSX.Element {
   });
 
   return (
-    <points ref={pointsRef}>
+    <points ref={pointsRef} userData={{ raycastIgnore: true }}>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"

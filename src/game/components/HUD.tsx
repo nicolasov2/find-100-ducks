@@ -159,6 +159,13 @@ export function HUD(): React.JSX.Element {
         ⭐ {totalExpGained} EXP
       </div>
 
+      {/* Hint tip when few gnomes remain */}
+      {remaining > 0 && remaining <= 15 && (
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full bg-cyan-500/80 px-4 py-2 text-xs font-semibold text-white backdrop-blur-sm animate-pulse">
+          💡 Presiona <kbd className="rounded bg-white/30 px-1">H</kbd> para revelar gnomos
+        </div>
+      )}
+
       {/* Hit flash border */}
       {hitFlash && (
         <div className="absolute inset-0 animate-pulse rounded-lg border-2 border-yellow-400/40" />

@@ -14,6 +14,7 @@ import { ExpPopups } from '@/game/components/ExpPopups';
 import { Shooter } from '@/game/components/Shooter';
 import { LaserGun } from '@/game/components/LaserGun';
 import { WeaponHotkey } from '@/game/components/WeaponHotkey';
+import { HintHotkey } from '@/game/components/HintHotkey';
 import { ScopeOverlay } from '@/game/components/ScopeOverlay';
 import { HUD } from '@/game/components/HUD';
 import { WinScreen } from '@/game/components/WinScreen';
@@ -24,6 +25,8 @@ import { Hallway1 } from '@/game/rooms/hallway1';
 import { Room2 } from '@/game/rooms/room2';
 import { Hallway2 } from '@/game/rooms/hallway2';
 import { Room3 } from '@/game/rooms/room3';
+import { Hallway3 } from '@/game/rooms/hallway3';
+import { Garden } from '@/game/rooms/garden';
 import { useGameStore } from '@/store/gameStore';
 import { initAudio, startMusic } from '@/game/systems/AudioManager';
 
@@ -62,6 +65,8 @@ export function GameCanvas(): React.JSX.Element {
             <Room2 />
             <Hallway2 />
             <Room3 />
+            <Hallway3 />
+            <Garden />
             <Player />
           </Physics>
           <DustMotes />
@@ -80,6 +85,7 @@ export function GameCanvas(): React.JSX.Element {
       <PauseMenu />
       <ScopeOverlay />
       <WeaponHotkey />
+      <HintHotkey />
       <WinScreen />
     </div>
   );

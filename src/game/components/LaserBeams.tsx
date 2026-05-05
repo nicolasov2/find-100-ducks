@@ -21,7 +21,7 @@ export function LaserBeams(): React.JSX.Element {
   });
 
   return (
-    <group>
+    <group userData={{ raycastIgnore: true }}>
       {beams.map((b) => (
         <LaserBeamMesh key={b.id} beam={b} />
       ))}

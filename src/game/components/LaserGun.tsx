@@ -105,7 +105,7 @@ export function LaserGun(): React.JSX.Element {
   });
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} userData={{ raycastIgnore: true }}>
       <mesh geometry={BODY_GEOM} material={BODY_MAT} />
       <mesh position={[0, -0.06, 0.04]} geometry={HANDLE_GEOM} material={HANDLE_MAT} />
       <mesh
