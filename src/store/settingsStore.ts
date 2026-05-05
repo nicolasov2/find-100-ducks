@@ -26,6 +26,7 @@ export const ACHIEVEMENTS_DEF: readonly Omit<Achievement, 'unlocked'>[] = [
   { id: 'mini_hunter', title: 'Mini Hunter', icon: '👶', description: 'Encontrar un gnomo escala < 0.4' },
   { id: 'perfect', title: 'Perfecto', icon: '🎯', description: '0 disparos fallidos' },
   { id: 'lightning', title: 'Lightning', icon: '⚡', description: 'Terminar en menos de 2 min' },
+  { id: 'weapons_master', title: 'Maestro de Armas', icon: '🔫', description: 'Desbloquear las 4 armas' },
 ];
 
 export interface SettingsState {

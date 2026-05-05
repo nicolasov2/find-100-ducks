@@ -24,7 +24,6 @@ const BASE_MAT = new MeshStandardMaterial({ color: '#1f1f23', roughness: 0.9 });
 const NOSE_MAT = new MeshStandardMaterial({ color: '#f87171', roughness: 0.6 });
 
 export interface GnomeModelProps {
-  useFallback?: boolean;
   bodyColor?: string;
   hatColor?: string;
   beardStyle?: BeardStyle;
@@ -32,7 +31,6 @@ export interface GnomeModelProps {
 }
 
 export function GnomeModel({
-  useFallback: _useFallback = true,
   bodyColor = '#dc2626',
   hatColor = '#dc2626',
   beardStyle = 'normal',

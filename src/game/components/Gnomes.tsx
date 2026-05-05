@@ -89,7 +89,6 @@ export function Gnomes(): React.JSX.Element {
           userData={{ gnomeId: d.id }}
         >
           <GnomeModel
-            useFallback
             bodyColor={d.bodyColor}
             hatColor={d.hatColor}
             beardStyle={d.beardStyle}

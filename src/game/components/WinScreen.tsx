@@ -91,6 +91,12 @@ export function WinScreen(): React.JSX.Element | null {
       if (unlocked.length > 0) {
         requestAnimationFrame(() => setNewWeapons(unlocked));
       }
+      // weapons_master: all 4 unlocked (laser-pistol always unlocked + 3 from candidates)
+      const allWeapons = ['laser-pistol', 'laser-rifle', 'laser-sniper', 'plasma-spreader'];
+      const finalUnlocked = new Set([...unlockedWeapons, ...unlocked]);
+      if (allWeapons.every((w) => finalUnlocked.has(w))) {
+        unlockAchievement('weapons_master');
+      }
     }
   }, [status, elapsed, accuracy, stats, difficulty, addEntry, unlockAchievement, addExp, totalExp, unlockedWeapons, unlockWeapon]);
 
