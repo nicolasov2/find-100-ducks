@@ -10,6 +10,7 @@ import type {
 } from '@/game/types';
 import { shuffled } from '@/game/utils/shuffle';
 import { randomPalette, randomScale, randomBeard } from '@/game/utils/gnomePalettes';
+import type { WeaponId } from '@/game/weapons/types';
 
 export const BEAM_DURATION_MS = 90;
 export const DEATH_DURATION_MS = 380;
@@ -28,6 +29,8 @@ export interface ShotInput {
   at: number;
   beamFrom: Vector3Tuple;
   beamTo: Vector3Tuple;
+  beamColor: string;
+  beamRadius: number;
   deadGnome: Gnome | null;
 }
 
@@ -55,7 +58,9 @@ export interface GameState {
   stats: GameStats;
   hitFlash: boolean;
   comboDisplay: number;
+  currentWeaponId: WeaponId;
   setStatus: (status: GameStatus) => void;
+  setCurrentWeapon: (id: WeaponId) => void;
   spawnGnomes: (pool: readonly SpawnPoint[], count: number) => void;
   triggerShot: (input: ShotInput) => void;
   purgeExpiredEffects: (now: number) => void;
@@ -92,7 +97,9 @@ export const useGameStore = create<GameState>((set) => ({
   stats: emptyStats(),
   hitFlash: false,
   comboDisplay: 0,
+  currentWeaponId: 'laser-pistol',
   setStatus: (status) => set({ status }),
+  setCurrentWeapon: (id) => set({ currentWeaponId: id }),
   spawnGnomes: (pool, count = 100) =>
     set(() => {
       const picked = shuffled(pool).slice(0, count);
@@ -124,12 +131,14 @@ export const useGameStore = create<GameState>((set) => ({
         comboDisplay: 0,
       };
     }),
-  triggerShot: ({ at, beamFrom, beamTo, deadGnome }) =>
+  triggerShot: ({ at, beamFrom, beamTo, beamColor, beamRadius, deadGnome }) =>
     set((state) => {
       const beam: BeamShot = {
         id: nextBeamId(),
         from: beamFrom,
         to: beamTo,
+        color: beamColor,
+        radius: beamRadius,
         startedAt: at,
       };
       const beams = [...state.beams, beam];

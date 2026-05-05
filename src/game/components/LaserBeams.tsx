@@ -6,9 +6,7 @@ import { CylinderGeometry, MeshBasicMaterial, Quaternion, Vector3 } from 'three'
 import { BEAM_DURATION_MS, useGameStore } from '@/store/gameStore';
 import type { BeamShot } from '@/game/types';
 
-const BEAM_RADIUS = 0.025;
-const BEAM_COLOR = '#22d3ee';
-const BEAM_GEOM = new CylinderGeometry(BEAM_RADIUS, BEAM_RADIUS, 1, 8, 1, true);
+const BEAM_GEOM = new CylinderGeometry(1, 1, 1, 8, 1, true);
 const Y_AXIS = new Vector3(0, 1, 0);
 
 export function LaserBeams(): React.JSX.Element {
@@ -65,12 +63,12 @@ function LaserBeamMesh({ beam }: { beam: BeamShot }): React.JSX.Element {
     <mesh
       position={geo.position}
       quaternion={geo.quaternion}
-      scale={[1, geo.length, 1]}
+      scale={[beam.radius, geo.length, beam.radius]}
       geometry={BEAM_GEOM}
     >
       <meshBasicMaterial
         ref={matRef}
-        color={BEAM_COLOR}
+        color={beam.color}
         transparent
         opacity={1}
         toneMapped={false}

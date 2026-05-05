@@ -35,6 +35,8 @@ export interface BeamShot {
   readonly id: string;
   readonly from: Vector3Tuple;
   readonly to: Vector3Tuple;
+  readonly color: string;
+  readonly radius: number;
   readonly startedAt: number;
 }
 

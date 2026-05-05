@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import {
   BoxGeometry,
@@ -12,6 +12,7 @@ import {
   Vector3,
 } from 'three';
 import { useGameStore } from '@/store/gameStore';
+import { WEAPONS } from '@/game/weapons/registry';
 
 const BODY_GEOM = new BoxGeometry(0.08, 0.06, 0.18);
 const HANDLE_GEOM = new BoxGeometry(0.05, 0.1, 0.07);
@@ -21,12 +22,6 @@ const EMITTER_GEOM = new SphereGeometry(0.025, 12, 8);
 const BODY_MAT = new MeshStandardMaterial({ color: '#0b1220', metalness: 0.6, roughness: 0.4 });
 const HANDLE_MAT = new MeshStandardMaterial({ color: '#1f1f23', roughness: 0.6 });
 const BARREL_MAT = new MeshStandardMaterial({ color: '#52525b', metalness: 0.9, roughness: 0.3 });
-const EMITTER_MAT = new MeshStandardMaterial({
-  color: '#22d3ee',
-  emissive: '#22d3ee',
-  emissiveIntensity: 1.5,
-});
-
 /* Flashlight ring geometry (visual) */
 const RING_GEOM = new CylinderGeometry(0.025, 0.028, 0.03, 14);
 const RING_MAT = new MeshStandardMaterial({ color: '#3f3f46', metalness: 0.8, roughness: 0.3 });
@@ -52,6 +47,18 @@ export function LaserGun(): React.JSX.Element {
   const phaseRef = useRef<number>(0);
   const camera = useThree((s) => s.camera);
   const lastShotAt = useGameStore((s) => s.lastShotAt);
+  const currentWeaponId = useGameStore((s) => s.currentWeaponId);
+  const weapon = WEAPONS[currentWeaponId];
+
+  const emitterMat = useMemo(
+    () =>
+      new MeshStandardMaterial({
+        color: weapon.beamColor,
+        emissive: weapon.beamColor,
+        emissiveIntensity: 1.5,
+      }),
+    [weapon.beamColor],
+  );
 
   useFrame((_, delta) => {
     const group = groupRef.current;
@@ -107,7 +114,37 @@ export function LaserGun(): React.JSX.Element {
         geometry={BARREL_GEOM}
         material={BARREL_MAT}
       />
-      <mesh position={[0, 0, -0.26]} geometry={EMITTER_GEOM} material={EMITTER_MAT} />
+      <mesh position={[0, 0, -0.26]} geometry={EMITTER_GEOM} material={emitterMat} />
+
+      {/* Sniper scope */}
+      {weapon.hasScope && (
+        <>
+          <mesh position={[0, 0.05, -0.05]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.022, 0.022, 0.18, 12]} />
+            <meshStandardMaterial color="#1f1f23" metalness={0.7} roughness={0.3} />
+          </mesh>
+          <mesh position={[0, 0.05, 0.04]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.028, 0.028, 0.04, 12]} />
+            <meshStandardMaterial color={weapon.beamColor} emissive={weapon.beamColor} emissiveIntensity={0.4} />
+          </mesh>
+        </>
+      )}
+
+      {/* Plasma spreader extra emitters */}
+      {weapon.multiShot > 1 && (
+        <>
+          <mesh position={[0.04, 0, -0.26]} geometry={EMITTER_GEOM} material={emitterMat} />
+          <mesh position={[-0.04, 0, -0.26]} geometry={EMITTER_GEOM} material={emitterMat} />
+        </>
+      )}
+
+      {/* Rifle barrel extension */}
+      {weapon.id === 'laser-rifle' && (
+        <mesh position={[0, 0, -0.30]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.024, 0.024, 0.12, 12]} />
+          <meshStandardMaterial color="#52525b" metalness={0.9} roughness={0.3} />
+        </mesh>
+      )}
 
       {/* Flashlight ring (visual) */}
       <mesh

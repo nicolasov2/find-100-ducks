@@ -13,6 +13,8 @@ import { LaserBeams } from '@/game/components/LaserBeams';
 import { ExpPopups } from '@/game/components/ExpPopups';
 import { Shooter } from '@/game/components/Shooter';
 import { LaserGun } from '@/game/components/LaserGun';
+import { WeaponHotkey } from '@/game/components/WeaponHotkey';
+import { ScopeOverlay } from '@/game/components/ScopeOverlay';
 import { HUD } from '@/game/components/HUD';
 import { WinScreen } from '@/game/components/WinScreen';
 import { PauseMenu } from '@/game/components/PauseMenu';
@@ -76,6 +78,8 @@ export function GameCanvas(): React.JSX.Element {
       <HUD />
       <LockOverlay />
       <PauseMenu />
+      <ScopeOverlay />
+      <WeaponHotkey />
       <WinScreen />
     </div>
   );

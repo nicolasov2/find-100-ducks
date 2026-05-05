@@ -6,15 +6,21 @@ import { useSettingsStore, Difficulty, getDifficultyConfig } from '@/store/setti
 import { useGameStore } from '@/store/gameStore';
 import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
 import { startMusic } from '@/game/systems/AudioManager';
+import { WeaponSelector } from '@/game/components/WeaponSelector';
+import type { WeaponId } from '@/game/weapons/types';
 
 export function StartButton(): React.JSX.Element {
   const difficulty = useSettingsStore((s) => s.difficulty);
   const setDifficulty = useSettingsStore((s) => s.setDifficulty);
+  const selectedWeapon = useSettingsStore((s) => s.selectedWeapon);
   const spawnGnomes = useGameStore((s) => s.spawnGnomes);
+  const setCurrentWeapon = useGameStore((s) => s.setCurrentWeapon);
   const [showOptions, setShowOptions] = useState(false);
+  const [showWeapons, setShowWeapons] = useState(false);
 
   const handlePlay = () => {
     const config = getDifficultyConfig(difficulty);
+    setCurrentWeapon(selectedWeapon as WeaponId);
     spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
     startMusic();
   };
@@ -64,6 +70,16 @@ export function StartButton(): React.JSX.Element {
       {showOptions && difficulty === 'easy' && <p className="text-xs text-zinc-500">150 gnomos, glow a 8 metros. Gnomos más grandes.</p>}
       {showOptions && difficulty === 'normal' && <p className="text-xs text-zinc-500">100 gnomos, glow a 5 metros.</p>}
       {showOptions && difficulty === 'hard' && <p className="text-xs text-zinc-500">100 gnomos, SIN glow. Gnomos más pequeños.</p>}
+
+      <button
+        type="button"
+        onClick={() => setShowWeapons(true)}
+        className="text-sm text-zinc-400 hover:text-white"
+      >
+        🔫 Arsenal
+      </button>
+
+      {showWeapons && <WeaponSelector onClose={() => setShowWeapons(false)} />}
     </div>
   );
 }
