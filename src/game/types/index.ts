@@ -16,7 +16,8 @@ export interface Gnome {
   readonly rotation: Vector3Tuple;
   readonly scale: number;
   readonly bodyColor: string;
-  readonly beakColor: string;
+  readonly hatColor: string;
+  readonly beardStyle: 'normal' | 'long' | 'none';
 }
 
 export interface DyingGnome {
@@ -25,7 +26,8 @@ export interface DyingGnome {
   readonly rotation: Vector3Tuple;
   readonly scale: number;
   readonly bodyColor: string;
-  readonly beakColor: string;
+  readonly hatColor: string;
+  readonly beardStyle: 'normal' | 'long' | 'none';
   readonly startedAt: number;
 }
 

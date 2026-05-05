@@ -8,7 +8,7 @@ import type {
   SpawnPoint,
 } from '@/game/types';
 import { shuffled } from '@/game/utils/shuffle';
-import { randomPalette, randomScale } from '@/game/utils/gnomePalettes';
+import { randomPalette, randomScale, randomBeard } from '@/game/utils/gnomePalettes';
 
 export const BEAM_DURATION_MS = 90;
 export const DEATH_DURATION_MS = 380;
@@ -89,7 +89,8 @@ export const useGameStore = create<GameState>((set) => ({
           rotation: [0, Math.random() * Math.PI * 2, 0],
           scale: randomScale(),
           bodyColor: palette.bodyColor,
-          beakColor: palette.beakColor,
+          hatColor: palette.hatColor,
+          beardStyle: randomBeard(),
         };
       });
       return {
@@ -154,7 +155,8 @@ export const useGameStore = create<GameState>((set) => ({
         rotation: deadGnome.rotation,
         scale: deadGnome.scale,
         bodyColor: deadGnome.bodyColor,
-        beakColor: deadGnome.beakColor,
+        hatColor: deadGnome.hatColor,
+        beardStyle: deadGnome.beardStyle,
         startedAt: at,
       };
       const dyingGnomes = [...state.dyingGnomes, dying];

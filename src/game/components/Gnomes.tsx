@@ -91,7 +91,8 @@ export function Gnomes(): React.JSX.Element {
           <GnomeModel
             useFallback
             bodyColor={d.bodyColor}
-            beakColor={d.beakColor}
+            hatColor={d.hatColor}
+            beardStyle={d.beardStyle}
             gnomeScale={d.scale}
           />
         </group>
