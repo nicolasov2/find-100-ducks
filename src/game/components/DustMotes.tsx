@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { BufferAttribute, Points } from 'three';
 
@@ -8,29 +8,38 @@ const MOTE_COUNT = 200;
 const SPREAD = 40;
 const HEIGHT = 4;
 
+interface MoteSpeed {
+  vx: number;
+  vy: number;
+  vz: number;
+  phase: number;
+}
+
+function makePositions(): Float32Array {
+  const arr = new Float32Array(MOTE_COUNT * 3);
+  for (let i = 0; i < MOTE_COUNT; i++) {
+    arr[i * 3] = (Math.random() - 0.5) * SPREAD;
+    arr[i * 3 + 1] = Math.random() * HEIGHT;
+    arr[i * 3 + 2] = (Math.random() - 0.5) * SPREAD;
+  }
+  return arr;
+}
+
+function makeSpeeds(): MoteSpeed[] {
+  return Array.from({ length: MOTE_COUNT }, () => ({
+    vx: (Math.random() - 0.5) * 0.15,
+    vy: 0.02 + Math.random() * 0.05,
+    vz: (Math.random() - 0.5) * 0.15,
+    phase: Math.random() * Math.PI * 2,
+  }));
+}
+
 export function DustMotes(): React.JSX.Element {
   const pointsRef = useRef<Points>(null);
   const camera = useThree((s) => s.camera);
 
-  const positions = useMemo(() => {
-    const arr = new Float32Array(MOTE_COUNT * 3);
-    for (let i = 0; i < MOTE_COUNT; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * SPREAD;
-      arr[i * 3 + 1] = Math.random() * HEIGHT;
-      arr[i * 3 + 2] = (Math.random() - 0.5) * SPREAD;
-    }
-    return arr;
-  }, []);
-
-  const speeds = useMemo(() =>
-    Array.from({ length: MOTE_COUNT }, () => ({
-      vx: (Math.random() - 0.5) * 0.15,
-      vy: 0.02 + Math.random() * 0.05,
-      vz: (Math.random() - 0.5) * 0.15,
-      phase: Math.random() * Math.PI * 2,
-    })),
-    [],
-  );
+  const [positions] = useState<Float32Array>(makePositions);
+  const [speeds] = useState<MoteSpeed[]>(makeSpeeds);
 
   useFrame((state) => {
     const pts = pointsRef.current;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useGameStore } from '@/store/gameStore';
 
 function formatElapsed(ms: number): string {
@@ -35,19 +35,21 @@ export function HUD(): React.JSX.Element {
     return () => { window.clearInterval(id); };
   }, [status]);
 
-  // Crosshair pulse on shot
+  // Crosshair pulse on shot — defer to next frame to avoid sync setState in effect
   useEffect(() => {
     if (!lastShotAt) return;
-    setShotAnim(true);
+    const raf = requestAnimationFrame(() => setShotAnim(true));
     const t = setTimeout(() => setShotAnim(false), 120);
-    return () => clearTimeout(t);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t);
+    };
   }, [lastShotAt]);
 
-  // Hit marker
+  // Hit marker + screen shake
   useEffect(() => {
     if (!hitFlash) return;
-    setShowHitMarker(true);
-    // Screen shake
+    const raf = requestAnimationFrame(() => setShowHitMarker(true));
     const shakeCount = 4;
     let i = 0;
     const interval = setInterval(() => {
@@ -66,19 +68,23 @@ export function HUD(): React.JSX.Element {
       setShowHitMarker(false);
       clearHitFlash();
     }, 300);
-    return () => { clearTimeout(t); clearInterval(interval); };
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t);
+      clearInterval(interval);
+    };
   }, [hitFlash, clearHitFlash]);
 
-  // Combo animation
-  const handleCombo = useCallback(() => {
-    if (comboDisplay >= 2) {
-      setComboAnim(comboDisplay);
-      const t = setTimeout(() => setComboAnim(0), 1200);
-      return () => clearTimeout(t);
-    }
+  // Combo animation — deferred to next frame
+  useEffect(() => {
+    if (comboDisplay < 2) return;
+    const raf = requestAnimationFrame(() => setComboAnim(comboDisplay));
+    const t = setTimeout(() => setComboAnim(0), 1200);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t);
+    };
   }, [comboDisplay]);
-
-  useEffect(() => { handleCombo(); }, [handleCombo]);
 
   const elapsed = startedAt === null ? 0 : (endedAt ?? now) - startedAt;
 

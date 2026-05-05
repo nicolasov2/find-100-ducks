@@ -181,7 +181,7 @@ export function playVictory(): void {
 /* ── Background music (ambient drone loop) ── */
 export function startMusic(): void {
   if (musicPlaying) return;
-  const c = getCtx();
+  getCtx();
   if (!musicGain) return;
   musicPlaying = true;
 

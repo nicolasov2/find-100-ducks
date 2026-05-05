@@ -10,8 +10,9 @@ import { useKeyboard } from '@/game/hooks/useKeyboard';
 import { playFootstep } from '@/game/systems/AudioManager';
 
 const WALK_SPEED = 4;
-const JUMP_IMPULSE = 7.0;
+const JUMP_IMPULSE = 6.5;
 const JUMP_COOLDOWN_MS = 250;
+const HORIZONTAL_DAMPING = 0.86;
 const FOOTSTEP_INTERVAL_MS = 350;
 const EYE_HEIGHT_OFFSET = 0.7;
 const CAPSULE_HALF_HEIGHT = 0.45;
@@ -35,7 +36,7 @@ export function Player(): React.JSX.Element {
   const camera = useThree((s) => s.camera);
   const { rapier, world } = useRapier();
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     const body = bodyRef.current;
     if (!body) return;
     if (groundRayRef.current === null) {
@@ -67,7 +68,15 @@ export function Player(): React.JSX.Element {
     }
 
     const linvel = body.linvel();
-    body.setLinvel({ x: moveVec.x, y: linvel.y, z: moveVec.z }, true);
+    if (moveVec.lengthSq() > 0) {
+      body.setLinvel({ x: moveVec.x, y: linvel.y, z: moveVec.z }, true);
+    } else {
+      const decay = Math.pow(HORIZONTAL_DAMPING, delta * 60);
+      body.setLinvel(
+        { x: linvel.x * decay, y: linvel.y, z: linvel.z * decay },
+        true,
+      );
+    }
 
     const t = body.translation();
     groundRay.origin.x = t.x;
@@ -110,7 +119,7 @@ export function Player(): React.JSX.Element {
       colliders={false}
       position={SPAWN}
       mass={1}
-      linearDamping={2}
+      linearDamping={0}
       lockRotations
       enabledRotations={[false, false, false]}
     >

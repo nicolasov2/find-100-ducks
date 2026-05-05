@@ -1,20 +1,31 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Color, InstancedMesh, Matrix4, Object3D, Vector3 } from 'three';
+import { Color, InstancedMesh, Object3D, Vector3 } from 'three';
 import { useGameStore, DEATH_DURATION_MS } from '@/store/gameStore';
 
 const FEATHER_COUNT = 10;
 const GRAVITY = -8;
 const dummy = new Object3D();
 const _color = new Color();
-const _matrix = new Matrix4();
 
 interface FeatherData {
   vel: Vector3;
   pos: Vector3;
   rotSpeed: number;
+}
+
+function makeFeathers(position: readonly [number, number, number]): FeatherData[] {
+  return Array.from({ length: FEATHER_COUNT }, () => ({
+    vel: new Vector3(
+      (Math.random() - 0.5) * 4,
+      2 + Math.random() * 3,
+      (Math.random() - 0.5) * 4,
+    ),
+    pos: new Vector3(position[0], position[1] + 0.15, position[2]),
+    rotSpeed: (Math.random() - 0.5) * 10,
+  }));
 }
 
 function FeatherBurstInstance({ position, color, startedAt }: {
@@ -23,20 +34,7 @@ function FeatherBurstInstance({ position, color, startedAt }: {
   startedAt: number;
 }): React.JSX.Element {
   const meshRef = useRef<InstancedMesh>(null);
-
-  const feathers = useMemo<FeatherData[]>(() =>
-    Array.from({ length: FEATHER_COUNT }, () => ({
-      vel: new Vector3(
-        (Math.random() - 0.5) * 4,
-        2 + Math.random() * 3,
-        (Math.random() - 0.5) * 4,
-      ),
-      pos: new Vector3(position[0], position[1] + 0.15, position[2]),
-      rotSpeed: (Math.random() - 0.5) * 10,
-    })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  const [feathers] = useState<FeatherData[]>(() => makeFeathers(position));
 
   useFrame(() => {
     const mesh = meshRef.current;

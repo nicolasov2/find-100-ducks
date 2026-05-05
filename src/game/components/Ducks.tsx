@@ -20,8 +20,6 @@ export function Ducks(): React.JSX.Element {
   const containerRef = useRef<Group | null>(null);
   const camera = useThree((s) => s.camera);
 
-  const duckTarget = useGameStore((s) => s.duckTarget);
-
   useEffect(() => {
     if (ducks.length === 0) {
       // In Ducks.tsx, we just use the duckTarget from the store if it's already set

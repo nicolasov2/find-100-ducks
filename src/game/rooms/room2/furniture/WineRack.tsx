@@ -1,7 +1,6 @@
 import { RigidBody } from '@react-three/rapier';
 
 const WOOD_COLOR = '#6b4f33';
-const BASKET_COLOR = '#a07550';
 
 export interface WineRackProps {
   position: readonly [number, number, number];
