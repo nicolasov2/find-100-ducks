@@ -42,6 +42,11 @@ export interface SettingsState {
   /* Achievements */
   unlockedAchievements: string[];
 
+  /* Progression — EXP + weapons */
+  totalExp: number;
+  unlockedWeapons: string[];
+  selectedWeapon: string;
+
   /* Actions */
   setMasterVolume: (v: number) => void;
   setSfxVolume: (v: number) => void;
@@ -50,6 +55,9 @@ export interface SettingsState {
   setDifficulty: (d: Difficulty) => void;
   addLeaderboardEntry: (entry: LeaderboardEntry) => void;
   unlockAchievement: (id: string) => void;
+  addExp: (amount: number) => void;
+  unlockWeapon: (id: string) => void;
+  setSelectedWeapon: (id: string) => void;
 }
 
 function loadFromStorage<T>(key: string, fallback: T): T {
@@ -77,6 +85,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   difficulty: loadFromStorage<Difficulty>('f100d_difficulty', 'normal'),
   leaderboard: loadFromStorage<LeaderboardEntry[]>('f100d_leaderboard', []),
   unlockedAchievements: loadFromStorage<string[]>('f100d_achievements', []),
+  totalExp: loadFromStorage<number>('f100d_totalExp', 0),
+  unlockedWeapons: loadFromStorage<string[]>('f100d_unlockedWeapons', ['laser-pistol']),
+  selectedWeapon: loadFromStorage<string>('f100d_selectedWeapon', 'laser-pistol'),
 
   setMasterVolume: (v) => { set({ masterVolume: v }); saveToStorage('f100d_masterVol', v); },
   setSfxVolume: (v) => { set({ sfxVolume: v }); saveToStorage('f100d_sfxVol', v); },
@@ -98,6 +109,25 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     const next = [...current, id];
     set({ unlockedAchievements: next });
     saveToStorage('f100d_achievements', next);
+  },
+
+  addExp: (amount) => {
+    const next = get().totalExp + Math.max(0, Math.round(amount));
+    set({ totalExp: next });
+    saveToStorage('f100d_totalExp', next);
+  },
+
+  unlockWeapon: (id) => {
+    const current = get().unlockedWeapons;
+    if (current.includes(id)) return;
+    const next = [...current, id];
+    set({ unlockedWeapons: next });
+    saveToStorage('f100d_unlockedWeapons', next);
+  },
+
+  setSelectedWeapon: (id) => {
+    set({ selectedWeapon: id });
+    saveToStorage('f100d_selectedWeapon', id);
   },
 }));
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import { useSettingsStore, ACHIEVEMENTS_DEF, getDifficultyConfig } from '@/store/settingsStore';
 import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
@@ -33,7 +33,12 @@ export function WinScreen(): React.JSX.Element | null {
   const leaderboard = useSettingsStore((s) => s.leaderboard);
   const unlockAchievement = useSettingsStore((s) => s.unlockAchievement);
   const unlockedAchievements = useSettingsStore((s) => s.unlockedAchievements);
+  const addExp = useSettingsStore((s) => s.addExp);
+  const totalExp = useSettingsStore((s) => s.totalExp);
+  const unlockedWeapons = useSettingsStore((s) => s.unlockedWeapons);
+  const unlockWeapon = useSettingsStore((s) => s.unlockWeapon);
   const didProcess = useRef(false);
+  const [newWeapons, setNewWeapons] = useState<string[]>([]);
 
   const elapsed = startedAt !== null && endedAt !== null ? endedAt - startedAt : 0;
   const accuracy = stats.shotsFired > 0 ? Math.round((stats.shotsHit / stats.shotsFired) * 100) : 0;
@@ -66,12 +71,34 @@ export function WinScreen(): React.JSX.Element | null {
     if (stats.shotsFired > 0 && stats.shotsFired === stats.shotsHit) unlockAchievement('perfect');
     // sharp_eye: 10 hits without miss handled by combo logic (max streak >= 10)
     if (stats.maxCombo >= 10) unlockAchievement('sharp_eye');
-  }, [status, elapsed, accuracy, stats, difficulty, addEntry, unlockAchievement]);
+
+    // Award EXP and check weapon unlocks
+    if (stats.totalExpGained > 0) {
+      addExp(stats.totalExpGained);
+      const newTotal = totalExp + stats.totalExpGained;
+      const candidates = [
+        { id: 'laser-rifle', threshold: 200 },
+        { id: 'laser-sniper', threshold: 500 },
+        { id: 'plasma-spreader', threshold: 1000 },
+      ];
+      const unlocked: string[] = [];
+      for (const c of candidates) {
+        if (newTotal >= c.threshold && !unlockedWeapons.includes(c.id)) {
+          unlockWeapon(c.id);
+          unlocked.push(c.id);
+        }
+      }
+      if (unlocked.length > 0) {
+        requestAnimationFrame(() => setNewWeapons(unlocked));
+      }
+    }
+  }, [status, elapsed, accuracy, stats, difficulty, addEntry, unlockAchievement, addExp, totalExp, unlockedWeapons, unlockWeapon]);
 
   if (status !== 'won') return null;
 
   const playAgain = (): void => {
     didProcess.current = false;
+    setNewWeapons([]);
     reset();
     const config = getDifficultyConfig(difficulty);
     spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
@@ -120,6 +147,21 @@ export function WinScreen(): React.JSX.Element | null {
             <span className="font-mono text-orange-400">x{stats.maxCombo}</span>
           </div>
         </div>
+
+        {/* EXP earned */}
+        <div className="rounded-xl bg-amber-400/10 p-3 text-center">
+          <p className="text-xs uppercase tracking-widest text-amber-300">EXP ganado</p>
+          <p className="mt-1 font-mono text-2xl font-bold text-amber-300">+{stats.totalExpGained}</p>
+          <p className="mt-1 text-xs text-zinc-400">Total acumulado: {totalExp + stats.totalExpGained}</p>
+        </div>
+
+        {/* New weapons unlocked */}
+        {newWeapons.length > 0 && (
+          <div className="rounded-xl bg-cyan-400/10 p-3 text-center animate-pulse">
+            <p className="text-xs uppercase tracking-widest text-cyan-300">🎉 Nueva arma desbloqueada</p>
+            <p className="mt-1 text-sm text-cyan-100">{newWeapons.join(', ')}</p>
+          </div>
+        )}
 
         {/* Achievements */}
         {newAchievements.length > 0 && (

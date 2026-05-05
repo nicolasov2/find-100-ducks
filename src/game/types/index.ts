@@ -38,4 +38,12 @@ export interface BeamShot {
   readonly startedAt: number;
 }
 
+export interface ExpPopup {
+  readonly id: string;
+  readonly position: Vector3Tuple;
+  readonly amount: number;
+  readonly mult: number;
+  readonly startedAt: number;
+}
+
 export type GameStatus = 'menu' | 'playing' | 'won';

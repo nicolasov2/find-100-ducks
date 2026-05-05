@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { Vector3Tuple } from 'three';
 import type {
   BeamShot,
+  ExpPopup,
   Gnome,
   DyingGnome,
   GameStatus,
@@ -12,7 +13,16 @@ import { randomPalette, randomScale, randomBeard } from '@/game/utils/gnomePalet
 
 export const BEAM_DURATION_MS = 90;
 export const DEATH_DURATION_MS = 380;
+export const EXP_POPUP_DURATION_MS = 900;
+export const EXP_BASE = 5;
 const COMBO_WINDOW_MS = 5000;
+const COMBO_MULTIPLIERS = [1.0, 1.4, 1.8, 2.0, 2.4, 2.8, 3.0] as const;
+
+export function getComboMultiplier(streak: number): number {
+  if (streak <= 0) return 1.0;
+  const idx = Math.min(streak, COMBO_MULTIPLIERS.length) - 1;
+  return COMBO_MULTIPLIERS[idx] ?? 1.0;
+}
 
 export interface ShotInput {
   at: number;
@@ -29,6 +39,7 @@ export interface GameStats {
   lastHitAt: number;
   roomsWithHits: Set<string>;
   smallestGnomeScale: number;
+  totalExpGained: number;
 }
 
 export interface GameState {
@@ -37,6 +48,7 @@ export interface GameState {
   gnomes: readonly Gnome[];
   dyingGnomes: readonly DyingGnome[];
   beams: readonly BeamShot[];
+  expPopups: readonly ExpPopup[];
   startedAt: number | null;
   endedAt: number | null;
   lastShotAt: number | null;
@@ -53,6 +65,8 @@ export interface GameState {
 
 let beamCounter = 0;
 const nextBeamId = (): string => `beam-${++beamCounter}`;
+let popupCounter = 0;
+const nextPopupId = (): string => `exp-${++popupCounter}`;
 
 const emptyStats = (): GameStats => ({
   shotsFired: 0,
@@ -62,6 +76,7 @@ const emptyStats = (): GameStats => ({
   lastHitAt: 0,
   roomsWithHits: new Set(),
   smallestGnomeScale: 999,
+  totalExpGained: 0,
 });
 
 export const useGameStore = create<GameState>((set) => ({
@@ -70,6 +85,7 @@ export const useGameStore = create<GameState>((set) => ({
   gnomes: [],
   dyingGnomes: [],
   beams: [],
+  expPopups: [],
   startedAt: null,
   endedAt: null,
   lastShotAt: null,
@@ -98,6 +114,7 @@ export const useGameStore = create<GameState>((set) => ({
         gnomeTarget: count,
         dyingGnomes: [],
         beams: [],
+        expPopups: [],
         status: 'playing',
         startedAt: Date.now(),
         endedAt: null,
@@ -148,6 +165,20 @@ export const useGameStore = create<GameState>((set) => ({
         newStats.smallestGnomeScale = deadGnome.scale;
       }
 
+      // EXP calculation with combo multiplier
+      const mult = getComboMultiplier(newStats.currentStreak);
+      const expGained = Math.round(EXP_BASE * mult);
+      newStats.totalExpGained += expGained;
+
+      const popup: ExpPopup = {
+        id: nextPopupId(),
+        position: deadGnome.position,
+        amount: expGained,
+        mult,
+        startedAt: at,
+      };
+      const expPopups = [...state.expPopups, popup];
+
       const gnomes = state.gnomes.filter((d) => d.id !== deadGnome.id);
       const dying: DyingGnome = {
         id: deadGnome.id,
@@ -165,6 +196,7 @@ export const useGameStore = create<GameState>((set) => ({
         gnomes,
         dyingGnomes,
         beams,
+        expPopups,
         lastShotAt: at,
         stats: newStats,
         hitFlash: true,
@@ -180,13 +212,17 @@ export const useGameStore = create<GameState>((set) => ({
       const dyingGnomes = state.dyingGnomes.filter(
         (d) => now - d.startedAt < DEATH_DURATION_MS,
       );
+      const expPopups = state.expPopups.filter(
+        (p) => now - p.startedAt < EXP_POPUP_DURATION_MS,
+      );
       if (
         beams.length === state.beams.length &&
-        dyingGnomes.length === state.dyingGnomes.length
+        dyingGnomes.length === state.dyingGnomes.length &&
+        expPopups.length === state.expPopups.length
       ) {
         return state;
       }
-      return { beams, dyingGnomes };
+      return { beams, dyingGnomes, expPopups };
     }),
   clearHitFlash: () => set({ hitFlash: false }),
   reset: () =>
@@ -194,6 +230,7 @@ export const useGameStore = create<GameState>((set) => ({
       gnomes: [],
       dyingGnomes: [],
       beams: [],
+      expPopups: [],
       status: 'menu',
       startedAt: null,
       endedAt: null,

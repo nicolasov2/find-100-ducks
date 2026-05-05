@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useGameStore } from '@/store/gameStore';
+import { useGameStore, getComboMultiplier } from '@/store/gameStore';
 
 function formatElapsed(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
@@ -21,7 +21,9 @@ export function HUD(): React.JSX.Element {
   const hitFlash = useGameStore((s) => s.hitFlash);
   const clearHitFlash = useGameStore((s) => s.clearHitFlash);
   const comboDisplay = useGameStore((s) => s.comboDisplay);
+  const totalExpGained = useGameStore((s) => s.stats.totalExpGained);
   const found = gnomeTarget - remaining;
+  const comboMult = getComboMultiplier(comboDisplay);
 
   const [now, setNow] = useState<number>(0);
   const [shotAnim, setShotAnim] = useState(false);
@@ -147,10 +149,15 @@ export function HUD(): React.JSX.Element {
           style={{ top: 'calc(50% + 40px)' }}
         >
           <span className="rounded-full bg-orange-500/80 px-3 py-1 text-sm text-white backdrop-blur-sm">
-            🔥 x{comboAnim} Combo!
+            🔥 x{comboAnim} Combo · ×{comboMult.toFixed(1)} EXP
           </span>
         </div>
       )}
+
+      {/* EXP earned this game */}
+      <div className="absolute left-4 top-24 rounded bg-black/50 px-2 py-1 text-xs backdrop-blur-sm">
+        ⭐ {totalExpGained} EXP
+      </div>
 
       {/* Hit flash border */}
       {hitFlash && (

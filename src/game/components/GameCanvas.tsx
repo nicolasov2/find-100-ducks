@@ -10,6 +10,7 @@ import { Gnomes } from '@/game/components/Gnomes';
 import { DyingGnomes } from '@/game/components/DyingGnomes';
 import { FeatherBursts } from '@/game/components/FeatherBursts';
 import { LaserBeams } from '@/game/components/LaserBeams';
+import { ExpPopups } from '@/game/components/ExpPopups';
 import { Shooter } from '@/game/components/Shooter';
 import { LaserGun } from '@/game/components/LaserGun';
 import { HUD } from '@/game/components/HUD';
@@ -66,6 +67,7 @@ export function GameCanvas(): React.JSX.Element {
           <DyingGnomes />
           <FeatherBursts />
           <LaserBeams />
+          <ExpPopups />
           <Shooter />
           <LaserGun />
         </Suspense>
