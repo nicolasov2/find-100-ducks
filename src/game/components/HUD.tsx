@@ -22,6 +22,8 @@ export function HUD(): React.JSX.Element {
   const hitFlash = useGameStore((s) => s.hitFlash);
   const clearHitFlash = useGameStore((s) => s.clearHitFlash);
   const comboDisplay = useGameStore((s) => s.comboDisplay);
+  const shotsHit = useGameStore((s) => s.stats.shotsHit);
+  const shotsFired = useGameStore((s) => s.stats.shotsFired);
   const totalExpGained = useGameStore((s) => s.stats.totalExpGained);
   const expSpent = useGameStore((s) => s.stats.expSpent);
   const totalExp = useSettingsStore((s) => s.totalExp);
@@ -117,7 +119,7 @@ export function HUD(): React.JSX.Element {
       {/* Stats bar */}
       <div className="absolute left-4 top-14 flex gap-2 text-xs">
         <div className="rounded bg-black/50 px-2 py-1 backdrop-blur-sm">
-          🎯 {useGameStore.getState().stats.shotsHit}/{useGameStore.getState().stats.shotsFired}
+          🎯 {shotsHit}/{shotsFired}
         </div>
       </div>
 

@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.42, 0, -0.42], max: [0.42, 0.87, 0.42] };
 
 const STONE = '#a1a1aa';
 const WATER = '#0ea5e9';

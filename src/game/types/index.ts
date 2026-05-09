@@ -7,6 +7,14 @@ export interface SpawnPoint {
   readonly position: Vector3Tuple;
   readonly rotation?: Vector3Tuple;
   readonly roomId: RoomId;
+  /** True for points intentionally placed on top of / inside furniture. Skips AABB rejection. */
+  readonly bypassAabb?: boolean;
+}
+
+/** Local-space axis-aligned bounding box for a furniture piece. */
+export interface LocalBounds {
+  readonly min: Vector3Tuple;
+  readonly max: Vector3Tuple;
 }
 
 export interface Gnome {

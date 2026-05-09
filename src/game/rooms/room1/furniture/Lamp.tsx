@@ -1,5 +1,8 @@
 import { RigidBody } from '@react-three/rapier';
 import { DoubleSide } from 'three';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.5, 0, -0.5], max: [0.5, 2.85, 0.5] };
 
 const METAL = '#3f3f46';
 const SHADE = '#fde68a';

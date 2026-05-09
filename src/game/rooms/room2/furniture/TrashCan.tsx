@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.20, 0, -0.20], max: [0.20, 0.54, 0.20] };
 
 const CAN_COLOR = '#52525b';
 const LID_COLOR = '#71717a';

@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.90, 0, -0.38], max: [0.90, 1.10, 0.26] };
 
 const BRICK_COLOR = '#78350f';
 const MANTEL_COLOR = '#5b3a1f';

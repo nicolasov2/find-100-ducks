@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.16, 0, -0.16], max: [0.16, 0.15, 0.16] };
 
 const BOWL_COLOR = '#d6d3d1';
 const FRUIT_COLORS = ['#ef4444', '#22c55e', '#f59e0b', '#f97316', '#eab308'];

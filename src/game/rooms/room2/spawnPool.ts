@@ -62,8 +62,16 @@ const POSITIONS: readonly Vector3Tuple[] = [
   [CX + 7.3, 0.40, 5.8], [CX - 7.3, 0.40, -1.8],
 ];
 
+// Floor-level points explicitly under the round table (inside its expanded AABB).
+const INSIDE_FURNITURE = new Set([16, 17, 18]);
+const BYPASS = new Set([
+  ...POSITIONS.flatMap((p, i) => (p[1] > 0.15 ? [i] : [])),
+  ...INSIDE_FURNITURE,
+]);
+
 export const SPAWN_POOL_ROOM_2: readonly SpawnPoint[] = POSITIONS.map((p, i) => ({
   id: `r2-${String(i + 1).padStart(3, '0')}`,
   position: p,
   roomId: 'room-2',
+  ...(BYPASS.has(i) ? { bypassAabb: true as const } : {}),
 }));

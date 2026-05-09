@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.16, 0, -0.09], max: [0.16, 1.40, 0.28] };
 
 const HANDLE = '#a07550';
 const BRISTLE = '#fde68a';

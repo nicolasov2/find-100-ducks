@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.25, 0, -0.25], max: [0.25, 1.78, 0.25] };
 
 const POLE_COLOR = '#5b3a1f';
 const HOOK_COLOR = '#78716c';

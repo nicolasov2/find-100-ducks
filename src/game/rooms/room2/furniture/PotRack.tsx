@@ -1,4 +1,8 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+/** Ceiling-hanging rack; bounds are centered at mount position (pots hang below). */
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.70, -0.45, -0.12], max: [0.70, 0.03, 0.12] };
 
 const METAL = '#3f3f46';
 const COPPER = '#b45309';

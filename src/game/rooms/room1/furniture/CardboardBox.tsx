@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.30, 0, -0.30], max: [0.30, 0.42, 0.30] };
 
 const CARDBOARD = '#c79872';
 const CARDBOARD_DARK = '#a07550';

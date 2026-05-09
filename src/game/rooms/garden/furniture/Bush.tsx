@@ -1,4 +1,8 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+/** Scale-1 bounds; worldAabb should apply scale when building registry. */
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.60, 0, -0.48], max: [0.60, 0.76, 0.48] };
 
 const FOLIAGE = '#16a34a';
 const FOLIAGE_DARK = '#15803d';

@@ -44,8 +44,17 @@ const POSITIONS: readonly Vector3Tuple[] = [
   [CX, 0.08, CZ + 9.8], [CX - 10.5, 0.08, CZ],
 ];
 
+// Inside/behind bushes (0-9), sunflower stem bases (22-25), bird bath base + beside (30, 32),
+// mushroom cluster bases (33-35) — all intentional low-y hiding spots inside collider bounds.
+const INSIDE_FURNITURE = new Set([0,1,2,3,4,5,6,7,8,9, 22,23,24,25, 30,32, 33,34,35]);
+const BYPASS = new Set([
+  ...POSITIONS.flatMap((p, i) => (p[1] > 0.15 ? [i] : [])),
+  ...INSIDE_FURNITURE,
+]);
+
 export const SPAWN_POOL_GARDEN: readonly SpawnPoint[] = POSITIONS.map((p, i) => ({
   id: `r4-${String(i + 1).padStart(3, '0')}`,
   position: p,
   roomId: 'garden',
+  ...(BYPASS.has(i) ? { bypassAabb: true as const } : {}),
 }));

@@ -5,9 +5,17 @@ import Link from 'next/link';
 import { useSettingsStore, Difficulty, getDifficultyConfig } from '@/store/settingsStore';
 import { useGameStore } from '@/store/gameStore';
 import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
+import { filterPoolByAabbs } from '@/game/utils/filterSpawnPool';
+import { ROOM1_AABBS } from '@/game/rooms/room1/roomAabbs';
+import { ROOM2_AABBS } from '@/game/rooms/room2/roomAabbs';
+import { ROOM3_AABBS } from '@/game/rooms/room3/roomAabbs';
+import { GARDEN_AABBS } from '@/game/rooms/garden/roomAabbs';
 import { startMusic } from '@/game/systems/AudioManager';
 import { WeaponSelector } from '@/game/components/WeaponSelector';
 import type { WeaponId } from '@/game/weapons/types';
+
+const ALL_AABBS = [...ROOM1_AABBS, ...ROOM2_AABBS, ...ROOM3_AABBS, ...GARDEN_AABBS];
+const SAFE_POOL = filterPoolByAabbs(SPAWN_POOL_ALL, ALL_AABBS);
 
 export function StartButton(): React.JSX.Element {
   const difficulty = useSettingsStore((s) => s.difficulty);
@@ -21,7 +29,7 @@ export function StartButton(): React.JSX.Element {
   const handlePlay = () => {
     const config = getDifficultyConfig(difficulty);
     setCurrentWeapon(selectedWeapon as WeaponId);
-    spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
+    spawnGnomes(SAFE_POOL, config.gnomeCount);
     startMusic();
   };
 

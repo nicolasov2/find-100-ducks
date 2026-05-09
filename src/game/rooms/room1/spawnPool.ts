@@ -66,8 +66,16 @@ const POSITIONS: readonly Vector3Tuple[] = [
   [-3, 2.6, -9.7], [7, 2.9, -9.7], [5, 2.7, 9.7],
 ];
 
+// Elevated positions (on top of furniture) + floor-level spots explicitly inside furniture volumes.
+const INSIDE_FURNITURE = new Set([6, 7, 8]); // under dining table
+const BYPASS = new Set([
+  ...POSITIONS.flatMap((p, i) => (p[1] > 0.15 ? [i] : [])),
+  ...INSIDE_FURNITURE,
+]);
+
 export const SPAWN_POOL_ROOM_1: readonly SpawnPoint[] = POSITIONS.map((p, i) => ({
   id: `r1-${String(i + 1).padStart(3, '0')}`,
   position: p,
   roomId: 'room-1',
+  ...(BYPASS.has(i) ? { bypassAabb: true as const } : {}),
 }));

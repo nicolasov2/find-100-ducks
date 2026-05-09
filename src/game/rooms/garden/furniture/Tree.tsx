@@ -1,4 +1,8 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+/** Scale-1 bounds; foliage clusters extend to r≈1.0 from center. */
+export const LOCAL_BOUNDS: LocalBounds = { min: [-1.0, 0, -0.95], max: [1.0, 3.35, 0.95] };
 
 const TRUNK = '#5b3a1f';
 const FOLIAGE = '#15803d';

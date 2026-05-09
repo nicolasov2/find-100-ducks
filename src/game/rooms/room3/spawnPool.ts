@@ -78,8 +78,16 @@ const POSITIONS: readonly Vector3Tuple[] = [
   [CX + 6.5, 1.5, CZ - 5.5], [CX + 5.5, 0.08, CZ - 5.0],
 ];
 
+// Floor-level spot under the coffee table (inside expanded AABB).
+const INSIDE_FURNITURE = new Set([38]);
+const BYPASS = new Set([
+  ...POSITIONS.flatMap((p, i) => (p[1] > 0.15 ? [i] : [])),
+  ...INSIDE_FURNITURE,
+]);
+
 export const SPAWN_POOL_ROOM_3: readonly SpawnPoint[] = POSITIONS.map((p, i) => ({
   id: `r3-${String(i + 1).padStart(3, '0')}`,
   position: p,
   roomId: 'room-3',
+  ...(BYPASS.has(i) ? { bypassAabb: true as const } : {}),
 }));

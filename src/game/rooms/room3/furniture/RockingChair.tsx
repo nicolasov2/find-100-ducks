@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.35, 0, -0.35], max: [0.35, 1.20, 0.28] };
 
 const WOOD = '#5b3a1f';
 const CUSHION = '#92400e';

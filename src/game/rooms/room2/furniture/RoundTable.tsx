@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-1.0, 0, -1.0], max: [1.0, 0.82, 1.0] };
 
 const TABLE_COLOR = '#8b6f47';
 

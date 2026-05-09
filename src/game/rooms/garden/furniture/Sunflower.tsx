@@ -1,4 +1,8 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+/** Scale-1 bounds. */
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.22, 0, -0.22], max: [0.22, 1.27, 0.22] };
 
 const STEM = '#16a34a';
 const PETAL = '#fbbf24';

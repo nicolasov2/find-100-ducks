@@ -1,4 +1,8 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+/** L-shaped counter; AABB over-rejects corner gap (accepted trade-off). */
+export const LOCAL_BOUNDS: LocalBounds = { min: [-2.55, 0, -0.43], max: [2.85, 0.96, 2.05] };
 
 const COUNTER_COLOR = '#d6d3d1';
 const COUNTER_FRONT = '#78716c';

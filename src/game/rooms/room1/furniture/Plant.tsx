@@ -1,4 +1,7 @@
 import { RigidBody } from '@react-three/rapier';
+import type { LocalBounds } from '@/game/types';
+
+export const LOCAL_BOUNDS: LocalBounds = { min: [-0.38, 0, -0.38], max: [0.38, 0.90, 0.38] };
 
 const POT = '#92400e';
 const FOLIAGE = '#15803d';
