@@ -16,9 +16,11 @@ export function PauseMenu(): React.JSX.Element | null {
   const masterVol = useSettingsStore((s) => s.masterVolume);
   const sfxVol = useSettingsStore((s) => s.sfxVolume);
   const musicVol = useSettingsStore((s) => s.musicVolume);
+  const fov = useSettingsStore((s) => s.fov);
   const setMasterVol = useSettingsStore((s) => s.setMasterVolume);
   const setSfxVol = useSettingsStore((s) => s.setSfxVolume);
   const setMusicVol = useSettingsStore((s) => s.setMusicVolume);
+  const setFov = useSettingsStore((s) => s.setFov);
   const difficulty = useSettingsStore((s) => s.difficulty);
 
   useEffect(() => {
@@ -95,6 +97,19 @@ export function PauseMenu(): React.JSX.Element | null {
               }}
               className="w-28 accent-yellow-400"
             />
+          </label>
+          <label className="flex items-center justify-between text-sm">
+            <span>🎯 Campo visual</span>
+            <div className="flex items-center gap-2">
+              <input
+                type="range"
+                min="60" max="100"
+                value={fov}
+                onChange={(e) => setFov(Number(e.target.value))}
+                className="w-24 accent-yellow-400"
+              />
+              <span className="w-8 text-right font-mono text-xs text-zinc-400">{fov}°</span>
+            </div>
           </label>
         </div>
 

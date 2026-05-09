@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import { useSettingsStore, ACHIEVEMENTS_DEF, getDifficultyConfig } from '@/store/settingsStore';
-import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
+import { SAFE_SPAWN_POOL } from '@/game/utils/safeSpawnPool';
 import { playVictory, stopMusic } from '@/game/systems/AudioManager';
 
 function formatTime(ms: number): string {
@@ -108,7 +108,7 @@ export function WinScreen(): React.JSX.Element | null {
     setNewWeapons([]);
     reset();
     const config = getDifficultyConfig(difficulty);
-    spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
+    spawnGnomes(SAFE_SPAWN_POOL, config.gnomeCount);
   };
 
   const newAchievements = ACHIEVEMENTS_DEF.filter(

@@ -35,6 +35,7 @@ export interface SettingsState {
   sfxVolume: number;
   musicVolume: number;
   sensitivity: number;
+  fov: number;
   difficulty: Difficulty;
 
   /* Leaderboard */
@@ -53,6 +54,7 @@ export interface SettingsState {
   setSfxVolume: (v: number) => void;
   setMusicVolume: (v: number) => void;
   setSensitivity: (v: number) => void;
+  setFov: (v: number) => void;
   setDifficulty: (d: Difficulty) => void;
   addLeaderboardEntry: (entry: LeaderboardEntry) => void;
   unlockAchievement: (id: string) => void;
@@ -84,6 +86,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   sfxVolume: loadFromStorage('f100d_sfxVol', 0.6),
   musicVolume: loadFromStorage('f100d_musicVol', 0.25),
   sensitivity: loadFromStorage('f100d_sensitivity', 1.0),
+  fov: loadFromStorage('f100d_fov', 75),
   difficulty: loadFromStorage<Difficulty>('f100d_difficulty', 'normal'),
   leaderboard: loadFromStorage<LeaderboardEntry[]>('f100d_leaderboard', []),
   unlockedAchievements: loadFromStorage<string[]>('f100d_achievements', []),
@@ -95,6 +98,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   setSfxVolume: (v) => { set({ sfxVolume: v }); saveToStorage('f100d_sfxVol', v); },
   setMusicVolume: (v) => { set({ musicVolume: v }); saveToStorage('f100d_musicVol', v); },
   setSensitivity: (v) => { set({ sensitivity: v }); saveToStorage('f100d_sensitivity', v); },
+  setFov: (v) => { set({ fov: v }); saveToStorage('f100d_fov', v); },
   setDifficulty: (d) => { set({ difficulty: d }); saveToStorage('f100d_difficulty', d); },
 
   addLeaderboardEntry: (entry) => {

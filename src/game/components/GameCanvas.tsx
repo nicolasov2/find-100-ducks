@@ -1,7 +1,8 @@
 'use client';
 
 import { Suspense, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
+import { PerspectiveCamera } from 'three';
 import { PointerLockControls } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
 import { Player } from '@/game/components/Player';
@@ -31,6 +32,18 @@ import { Garden } from '@/game/rooms/garden';
 import { useGameStore } from '@/store/gameStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { initAudio, startMusic, setMasterVolume, setSfxVolume, setMusicVolume } from '@/game/systems/AudioManager';
+
+function CameraFOVSync(): null {
+  const camera = useThree((s) => s.camera);
+  const fov = useSettingsStore((s) => s.fov);
+  useEffect(() => {
+    if (camera instanceof PerspectiveCamera) {
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }
+  }, [camera, fov]);
+  return null;
+}
 
 export function GameCanvas(): React.JSX.Element {
   const status = useGameStore((s) => s.status);
@@ -67,6 +80,7 @@ export function GameCanvas(): React.JSX.Element {
           shadow-camera-bottom={-40}
           shadow-camera-far={100}
         />
+        <CameraFOVSync />
         <Suspense fallback={null}>
           <Physics gravity={[0, -25, 0]}>
             <Room1 />
