@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSettingsStore, Difficulty, getDifficultyConfig } from '@/store/settingsStore';
 import { useGameStore } from '@/store/gameStore';
@@ -17,6 +17,13 @@ export function StartButton(): React.JSX.Element {
   const setCurrentWeapon = useGameStore((s) => s.setCurrentWeapon);
   const [showOptions, setShowOptions] = useState(false);
   const [showWeapons, setShowWeapons] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const touch = 'ontouchstart' in window;
+    const noLock = !('requestPointerLock' in document.body);
+    setIsMobile(touch || noLock);
+  }, []);
 
   const handlePlay = () => {
     const config = getDifficultyConfig(difficulty);
@@ -24,6 +31,16 @@ export function StartButton(): React.JSX.Element {
     spawnGnomes(SAFE_SPAWN_POOL, config.gnomeCount);
     startMusic();
   };
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900/80 px-8 py-6 text-center backdrop-blur-sm">
+        <span className="text-3xl">🖥️</span>
+        <p className="font-semibold text-zinc-200">Solo disponible en escritorio</p>
+        <p className="text-sm text-zinc-500">Este juego requiere teclado y mouse con Pointer Lock.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-6">

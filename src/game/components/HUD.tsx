@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useGameStore, getComboMultiplier, HINT_EXP_COST } from '@/store/gameStore';
+import { useGameStore, getComboMultiplier, HINT_EXP_COST, HINT_AUTO_GLOW_THRESHOLD } from '@/store/gameStore';
 import { useSettingsStore } from '@/store/settingsStore';
 
 function formatElapsed(ms: number): string {
@@ -171,18 +171,24 @@ export function HUD(): React.JSX.Element {
         </div>
       </div>
 
-      {/* Hint tip — always available, but shows cost */}
+      {/* Hint tip */}
       {remaining > 0 && (
-        <div
-          className={`absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full px-4 py-2 text-xs font-semibold text-white backdrop-blur-sm transition ${
-            canAffordHint
-              ? 'bg-cyan-500/80 animate-pulse'
-              : 'bg-zinc-800/80 opacity-70'
-          }`}
-        >
-          💡 <kbd className="rounded bg-white/30 px-1">H</kbd> revelar gnomos · {HINT_EXP_COST} EXP
-          {!canAffordHint && <span className="ml-2 text-red-300">insuficiente</span>}
-        </div>
+        remaining <= HINT_AUTO_GLOW_THRESHOLD ? (
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full bg-amber-500/70 px-4 py-2 text-xs font-semibold text-white backdrop-blur-sm">
+            ✨ Auto-revelados — quedan {remaining}
+          </div>
+        ) : (
+          <div
+            className={`absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full px-4 py-2 text-xs font-semibold text-white backdrop-blur-sm transition ${
+              canAffordHint
+                ? 'bg-cyan-500/80 animate-pulse'
+                : 'bg-zinc-800/80 opacity-70'
+            }`}
+          >
+            💡 <kbd className="rounded bg-white/30 px-1">H</kbd> revelar gnomos · {HINT_EXP_COST} EXP
+            {!canAffordHint && <span className="ml-2 text-red-300">insuficiente</span>}
+          </div>
+        )
       )}
 
       {/* Hit flash border */}

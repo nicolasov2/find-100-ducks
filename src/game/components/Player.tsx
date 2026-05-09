@@ -10,6 +10,7 @@ import { useKeyboard } from '@/game/hooks/useKeyboard';
 import { playFootstep } from '@/game/systems/AudioManager';
 
 const WALK_SPEED = 4;
+const SPRINT_MULTIPLIER = 1.6;
 const JUMP_IMPULSE = 6.5;
 const JUMP_COOLDOWN_MS = 250;
 const HORIZONTAL_DAMPING = 0.86;
@@ -63,8 +64,11 @@ export function Player(): React.JSX.Element {
     if (pressed.has('d')) moveVec.add(rightVec);
     if (pressed.has('a')) moveVec.sub(rightVec);
 
+    const sprinting = pressed.has('shift');
+    const speed = sprinting ? WALK_SPEED * SPRINT_MULTIPLIER : WALK_SPEED;
+
     if (moveVec.lengthSq() > 0) {
-      moveVec.normalize().multiplyScalar(WALK_SPEED);
+      moveVec.normalize().multiplyScalar(speed);
     }
 
     const linvel = body.linvel();
@@ -95,7 +99,8 @@ export function Player(): React.JSX.Element {
 
     if (grounded && moveVec.lengthSq() > 0) {
       const now = performance.now();
-      if (now - lastFootstepAtRef.current > FOOTSTEP_INTERVAL_MS) {
+      const interval = sprinting ? FOOTSTEP_INTERVAL_MS / SPRINT_MULTIPLIER : FOOTSTEP_INTERVAL_MS;
+      if (now - lastFootstepAtRef.current > interval) {
         playFootstep();
         lastFootstepAtRef.current = now;
       }

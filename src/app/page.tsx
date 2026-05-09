@@ -26,7 +26,7 @@ export default function Home(): React.JSX.Element {
         <StartButton />
 
         {/* Controls Hint */}
-        <div className="mt-8 flex gap-8 text-sm text-zinc-500">
+        <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-zinc-500">
           <div className="flex flex-col items-center gap-2">
             <div className="flex gap-1">
               <kbd className="rounded border border-zinc-700 bg-zinc-800 px-2 py-1 font-mono text-zinc-300">W</kbd>
@@ -37,16 +37,20 @@ export default function Home(): React.JSX.Element {
             <span>Moverse</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <div className="flex gap-1">
-              <kbd className="rounded border border-zinc-700 bg-zinc-800 px-6 py-1 font-mono text-zinc-300">Espacio</kbd>
-            </div>
+            <kbd className="rounded border border-zinc-700 bg-zinc-800 px-3 py-1 font-mono text-zinc-300">Shift</kbd>
+            <span>Sprint</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <kbd className="rounded border border-zinc-700 bg-zinc-800 px-6 py-1 font-mono text-zinc-300">Espacio</kbd>
             <span>Saltar</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <div className="flex gap-1">
-              <kbd className="rounded border border-zinc-700 bg-zinc-800 px-3 py-1 font-mono text-zinc-300">Click</kbd>
-            </div>
+            <kbd className="rounded border border-zinc-700 bg-zinc-800 px-3 py-1 font-mono text-zinc-300">Click</kbd>
             <span>Disparar láser</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <kbd className="rounded border border-zinc-700 bg-zinc-800 px-2 py-1 font-mono text-zinc-300">H</kbd>
+            <span>Pista</span>
           </div>
         </div>
       </div>
