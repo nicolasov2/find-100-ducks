@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { setMasterVolume, setSfxVolume, setMusicVolume } from '@/game/systems/AudioManager';
-import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
+import { SAFE_SPAWN_POOL } from '@/game/utils/safeSpawnPool';
 import { getDifficultyConfig } from '@/store/settingsStore';
+import { stopMusic } from '@/game/systems/AudioManager';
 
 export function PauseMenu(): React.JSX.Element | null {
   const status = useGameStore((s) => s.status);
@@ -34,10 +35,11 @@ export function PauseMenu(): React.JSX.Element | null {
   const handleRestart = (): void => {
     reset();
     const config = getDifficultyConfig(difficulty);
-    spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
+    spawnGnomes(SAFE_SPAWN_POOL, config.gnomeCount);
   };
 
   const handleQuit = (): void => {
+    stopMusic();
     reset();
     window.location.href = '/';
   };

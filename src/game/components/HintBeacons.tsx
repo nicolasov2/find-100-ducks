@@ -9,7 +9,7 @@ import {
 } from 'three';
 import { HINT_DURATION_MS, useGameStore } from '@/store/gameStore';
 
-const PILLAR_GEOM = new CylinderGeometry(0.04, 0.08, 6, 8, 1, true);
+const PILLAR_GEOM = new CylinderGeometry(0.04, 0.08, 3, 8, 1, true);
 const PILLAR_COLOR = '#22d3ee';
 
 export function HintBeacons(): React.JSX.Element | null {
@@ -45,7 +45,7 @@ function Beacon({
 
   return (
     <mesh
-      position={[position[0], position[1] + 3.0, position[2]]}
+      position={[position[0], position[1] + 1.5, position[2]]}
       geometry={PILLAR_GEOM}
       renderOrder={998}
     >

@@ -61,7 +61,7 @@ function DyingGnomeMesh({ gnome }: { gnome: DyingGnome }): React.JSX.Element {
   });
 
   return (
-    <group ref={groupRef} position={gnome.position}>
+    <group ref={groupRef} position={gnome.position} userData={{ raycastIgnore: true }}>
       <mesh position={[0, 0.02, 0]} geometry={GNOME_BASE_GEOM}>
         <meshStandardMaterial ref={baseMatRef} color="#1f1f23" transparent />
       </mesh>

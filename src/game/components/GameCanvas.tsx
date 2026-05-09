@@ -29,14 +29,21 @@ import { Room3 } from '@/game/rooms/room3';
 import { Hallway3 } from '@/game/rooms/hallway3';
 import { Garden } from '@/game/rooms/garden';
 import { useGameStore } from '@/store/gameStore';
-import { initAudio, startMusic } from '@/game/systems/AudioManager';
+import { useSettingsStore } from '@/store/settingsStore';
+import { initAudio, startMusic, setMasterVolume, setSfxVolume, setMusicVolume } from '@/game/systems/AudioManager';
 
 export function GameCanvas(): React.JSX.Element {
   const status = useGameStore((s) => s.status);
+  const sensitivity = useSettingsStore((s) => s.sensitivity);
 
   useEffect(() => {
     if (status === 'playing') {
       initAudio();
+      // Push saved volume prefs to AudioManager gain nodes on first play
+      const { masterVolume, sfxVolume, musicVolume } = useSettingsStore.getState();
+      setMasterVolume(masterVolume);
+      setSfxVolume(sfxVolume);
+      setMusicVolume(musicVolume);
       startMusic();
     }
   }, [status]);
@@ -81,7 +88,7 @@ export function GameCanvas(): React.JSX.Element {
           <Shooter />
           <LaserGun />
         </Suspense>
-        <PointerLockControls />
+        <PointerLockControls pointerSpeed={sensitivity} />
       </Canvas>
       <HUD />
       <LockOverlay />

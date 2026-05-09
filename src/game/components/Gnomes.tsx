@@ -8,7 +8,7 @@ import {
   HINT_DURATION_MS,
   useGameStore,
 } from '@/store/gameStore';
-import { SPAWN_POOL_ALL } from '@/game/utils/spawnPoolAll';
+import { SAFE_SPAWN_POOL } from '@/game/utils/safeSpawnPool';
 import { GnomeModel } from '@/game/components/GnomeModel';
 
 const BOB_AMPLITUDE = 0.025;
@@ -31,7 +31,7 @@ export function Gnomes(): React.JSX.Element {
       // The actual spawn happens in StartButton, but this is a fallback for direct /play loads
       import('@/store/settingsStore').then((m) => {
         const config = m.getDifficultyConfig(m.useSettingsStore.getState().difficulty);
-        spawnGnomes(SPAWN_POOL_ALL, config.gnomeCount);
+        spawnGnomes(SAFE_SPAWN_POOL, config.gnomeCount);
       });
     }
   }, [gnomes.length, spawnGnomes]);
