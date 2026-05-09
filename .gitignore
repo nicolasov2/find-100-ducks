@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# RUFLO / agent orchestration (local only)
+.swarm/
+.claude-flow/
+ruvector.db
+ruvector.db-shm
+ruvector.db-wal
