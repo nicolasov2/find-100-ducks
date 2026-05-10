@@ -19,6 +19,7 @@ import { WallPainting } from '@/game/rooms/room1/furniture/WallPainting';
 import { Pouf } from '@/game/rooms/room1/furniture/Pouf';
 import { PlanterBox } from '@/game/rooms/room1/furniture/PlanterBox';
 import { RockingChair } from './furniture/RockingChair';
+import { CeilingLight } from '@/game/rooms/room1/furniture/CeilingLight';
 
 const CX = 28;
 const CZ = 21;
@@ -103,10 +104,23 @@ export function Room3(): React.JSX.Element {
       {/* ── Planter ── */}
       <PlanterBox position={[CX, 0, CZ - 5.5]} rotationY={0} />
 
+      {/* ── Ceiling lights ── */}
+      <CeilingLight position={[CX + 3, 0, CZ - 3]} color="#fff0d0" intensity={3} />
+      <CeilingLight position={[CX - 3, 0, CZ + 2]} color="#fff0d0" intensity={3} />
+
+      {/* ── Candles sobre la chimenea ── */}
+      <group position={[CX + HW - 0.5, 1.12, CZ - 0.6]}>
+        <mesh position={[-0.18, 0.06, 0]}><cylinderGeometry args={[0.025, 0.025, 0.12, 6]} /><meshStandardMaterial color="#fef3c7" /></mesh>
+        <mesh position={[-0.18, 0.145, 0]}><sphereGeometry args={[0.016, 5, 4]} /><meshStandardMaterial color="#fbbf24" emissive="#f59e0b" emissiveIntensity={3} /></mesh>
+        <mesh position={[0.18, 0.08, 0]}><cylinderGeometry args={[0.025, 0.025, 0.16, 6]} /><meshStandardMaterial color="#fef3c7" /></mesh>
+        <mesh position={[0.18, 0.165, 0]}><sphereGeometry args={[0.016, 5, 4]} /><meshStandardMaterial color="#fbbf24" emissive="#f59e0b" emissiveIntensity={3} /></mesh>
+      </group>
+
       {/* ── Lighting ── */}
-      <pointLight position={[CX, 3.5, CZ]} intensity={6} distance={12} decay={2} color="#fef3c7" />
-      <pointLight position={[CX - 3, 3.5, CZ - 2]} intensity={3} distance={8} decay={2} color="#fef3c7" />
-      <pointLight position={[CX + 4, 3.5, CZ + 2]} intensity={3} distance={8} decay={2} color="#fef3c7" />
+      <pointLight position={[CX, 3.5, CZ]} intensity={4} distance={12} decay={2} color="#fef3c7" />
+      <pointLight position={[CX - 3, 3.5, CZ - 2]} intensity={2} distance={8} decay={2} color="#fef3c7" />
+      <pointLight position={[CX + 4, 3.5, CZ + 2]} intensity={2} distance={8} decay={2} color="#fef3c7" />
+      <pointLight position={[CX + HW - 0.5, 1.6, CZ]} intensity={3} distance={5} decay={2} color="#ff7c00" />
     </group>
   );
 }

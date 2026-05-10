@@ -123,6 +123,21 @@ export function Garden(): React.JSX.Element {
       {/* ── Extended east / west / south areas ── */}
       <GardenExtension />
 
+      {/* ── Stepping stones along main path ── */}
+      {[-6, -4, -2, 0, 2, 4].map((dz) => (
+        <mesh key={dz} position={[CX, 0.008, NORTH_Z + 4 + dz]} receiveShadow>
+          <boxGeometry args={[0.65, 0.018, 0.65]} />
+          <meshStandardMaterial color="#a8a29e" roughness={0.9} />
+        </mesh>
+      ))}
+
+      {/* ── Garden lantern at entrance ── */}
+      <group position={[CX + 1.8, 0, NORTH_Z + 0.6]}>
+        <mesh position={[0, 0.8, 0]}><cylinderGeometry args={[0.04, 0.04, 1.6, 6]} /><meshStandardMaterial color="#44403c" roughness={0.8} /></mesh>
+        <mesh position={[0, 1.7, 0]}><boxGeometry args={[0.28, 0.28, 0.28]} /><meshStandardMaterial color="#fef9c3" transparent opacity={0.3} /></mesh>
+        <pointLight position={[0, 1.7, 0]} intensity={2} distance={6} decay={2} color="#fff0a0" />
+      </group>
+
       {/* ── Lights ── */}
       <pointLight position={[CX, 5, CZ]} intensity={3} distance={22} decay={2} color="#fff7d6" />
       <pointLight position={[CX - 6, 4, CZ + 5]} intensity={1.5} distance={12} decay={2} color="#fff7d6" />
