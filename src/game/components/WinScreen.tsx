@@ -1,24 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import { useSettingsStore, ACHIEVEMENTS_DEF, getDifficultyConfig } from '@/store/settingsStore';
 import { SAFE_SPAWN_POOL } from '@/game/utils/safeSpawnPool';
-import { playVictory, stopMusic } from '@/game/systems/AudioManager';
-
-function formatTime(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
-function getStars(ms: number): number {
-  const sec = ms / 1000;
-  if (sec <= 120) return 3;
-  if (sec <= 300) return 2;
-  return 1;
-}
+import { useWinProcessor } from '@/game/hooks/useWinProcessor';
+import { formatTime, getStars } from '@/game/utils/winUtils';
 
 export function WinScreen(): React.JSX.Element | null {
   const status = useGameStore((s) => s.status);
@@ -29,101 +15,35 @@ export function WinScreen(): React.JSX.Element | null {
   const reset = useGameStore((s) => s.reset);
   const spawnGnomes = useGameStore((s) => s.spawnGnomes);
   const difficulty = useSettingsStore((s) => s.difficulty);
-  const addEntry = useSettingsStore((s) => s.addLeaderboardEntry);
   const leaderboard = useSettingsStore((s) => s.leaderboard);
-  const unlockAchievement = useSettingsStore((s) => s.unlockAchievement);
   const unlockedAchievements = useSettingsStore((s) => s.unlockedAchievements);
-  const addExp = useSettingsStore((s) => s.addExp);
   const totalExp = useSettingsStore((s) => s.totalExp);
-  const unlockedWeapons = useSettingsStore((s) => s.unlockedWeapons);
-  const unlockWeapon = useSettingsStore((s) => s.unlockWeapon);
-  const didProcess = useRef(false);
-  const [newWeapons, setNewWeapons] = useState<string[]>([]);
 
   const elapsed = startedAt !== null && endedAt !== null ? endedAt - startedAt : 0;
   const accuracy = stats.shotsFired > 0 ? Math.round((stats.shotsHit / stats.shotsFired) * 100) : 0;
   const stars = getStars(elapsed);
 
-  // Process achievements and leaderboard on win
-  useEffect(() => {
-    if (status !== 'won' || didProcess.current) return;
-    didProcess.current = true;
-
-    playVictory();
-    stopMusic();
-
-    // Save to leaderboard
-    addEntry({
-      time: elapsed,
-      date: new Date().toLocaleDateString(),
-      difficulty,
-      accuracy,
-      maxCombo: stats.maxCombo,
-    });
-
-    // Check achievements
-    const sec = elapsed / 1000;
-    if (sec < 180) unlockAchievement('speed_runner');
-    if (sec < 120) unlockAchievement('lightning');
-    if (stats.maxCombo >= 5) unlockAchievement('on_fire');
-    if (stats.roomsWithHits.size >= 3) unlockAchievement('explorer');
-    if (stats.smallestGnomeScale < 0.4) unlockAchievement('mini_hunter');
-    if (stats.shotsFired > 0 && stats.shotsFired === stats.shotsHit) unlockAchievement('perfect');
-    // sharp_eye: 10 hits without miss handled by combo logic (max streak >= 10)
-    if (stats.maxCombo >= 10) unlockAchievement('sharp_eye');
-
-    // Award EXP (net of in-match hint spending) and check weapon unlocks
-    const netExp = Math.max(0, stats.totalExpGained - stats.expSpent);
-    if (netExp > 0) {
-      addExp(netExp);
-      const newTotal = totalExp + netExp;
-      const candidates = [
-        { id: 'laser-rifle', threshold: 200 },
-        { id: 'laser-sniper', threshold: 500 },
-        { id: 'plasma-spreader', threshold: 1000 },
-      ];
-      const unlocked: string[] = [];
-      for (const c of candidates) {
-        if (newTotal >= c.threshold && !unlockedWeapons.includes(c.id)) {
-          unlockWeapon(c.id);
-          unlocked.push(c.id);
-        }
-      }
-      if (unlocked.length > 0) {
-        requestAnimationFrame(() => setNewWeapons(unlocked));
-      }
-      // weapons_master: all 4 unlocked (laser-pistol always unlocked + 3 from candidates)
-      const allWeapons = ['laser-pistol', 'laser-rifle', 'laser-sniper', 'plasma-spreader'];
-      const finalUnlocked = new Set([...unlockedWeapons, ...unlocked]);
-      if (allWeapons.every((w) => finalUnlocked.has(w))) {
-        unlockAchievement('weapons_master');
-      }
-    }
-  }, [status, elapsed, accuracy, stats, difficulty, addEntry, unlockAchievement, addExp, totalExp, unlockedWeapons, unlockWeapon]);
+  const { newWeapons, resetProcessor } = useWinProcessor(elapsed, accuracy);
 
   if (status !== 'won') return null;
 
   const playAgain = (): void => {
-    didProcess.current = false;
-    setNewWeapons([]);
+    resetProcessor();
     reset();
     const config = getDifficultyConfig(difficulty);
     spawnGnomes(SAFE_SPAWN_POOL, config.gnomeCount);
   };
 
-  const newAchievements = ACHIEVEMENTS_DEF.filter(
-    (a) => unlockedAchievements.includes(a.id),
-  );
+  const newAchievements = ACHIEVEMENTS_DEF.filter((a) => unlockedAchievements.includes(a.id));
+  const netExp = Math.max(0, stats.totalExpGained - stats.expSpent);
 
   return (
     <div className="pointer-events-auto absolute inset-0 z-10 flex items-center justify-center bg-black/80 text-white">
       <div className="flex max-h-[90vh] w-full max-w-lg flex-col gap-4 overflow-y-auto rounded-2xl border border-white/10 bg-zinc-900/95 p-8 backdrop-blur-xl">
-        {/* Title */}
         <h2 className="text-center text-3xl font-bold tracking-tight">
           ¡Encontraste los {gnomeTarget}! 🧙
         </h2>
 
-        {/* Stars */}
         <div className="flex justify-center gap-1 text-4xl">
           {[1, 2, 3].map((s) => (
             <span key={s} className={s <= stars ? 'animate-bounce' : 'opacity-20'} style={{ animationDelay: `${s * 0.1}s` }}>
@@ -132,10 +52,8 @@ export function WinScreen(): React.JSX.Element | null {
           ))}
         </div>
 
-        {/* Time */}
         <p className="text-center font-mono text-3xl text-yellow-300">{formatTime(elapsed)}</p>
 
-        {/* Stats grid */}
         <div className="grid grid-cols-2 gap-2 rounded-xl bg-white/5 p-4 text-sm">
           <div className="flex justify-between">
             <span className="text-zinc-400">Disparos</span>
@@ -155,23 +73,19 @@ export function WinScreen(): React.JSX.Element | null {
           </div>
         </div>
 
-        {/* EXP earned */}
         <div className="rounded-xl bg-amber-400/10 p-3 text-center">
           <p className="text-xs uppercase tracking-widest text-amber-300">EXP ganado</p>
-          <p className="mt-1 font-mono text-2xl font-bold text-amber-300">
-            +{Math.max(0, stats.totalExpGained - stats.expSpent)}
-          </p>
+          <p className="mt-1 font-mono text-2xl font-bold text-amber-300">+{netExp}</p>
           {stats.expSpent > 0 && (
             <p className="mt-0.5 text-xs text-zinc-500">
               ({stats.totalExpGained} ganado − {stats.expSpent} en pistas)
             </p>
           )}
           <p className="mt-1 text-xs text-zinc-400">
-            Wallet acumulado: {totalExp + Math.max(0, stats.totalExpGained - stats.expSpent)}
+            Wallet acumulado: {totalExp + netExp}
           </p>
         </div>
 
-        {/* New weapons unlocked */}
         {newWeapons.length > 0 && (
           <div className="rounded-xl bg-cyan-400/10 p-3 text-center animate-pulse">
             <p className="text-xs uppercase tracking-widest text-cyan-300">🎉 Nueva arma desbloqueada</p>
@@ -179,7 +93,6 @@ export function WinScreen(): React.JSX.Element | null {
           </div>
         )}
 
-        {/* Achievements */}
         {newAchievements.length > 0 && (
           <div className="rounded-xl bg-yellow-400/10 p-3">
             <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-yellow-400">Logros</p>
@@ -193,7 +106,6 @@ export function WinScreen(): React.JSX.Element | null {
           </div>
         )}
 
-        {/* Leaderboard */}
         {leaderboard.length > 0 && (
           <div className="rounded-xl bg-white/5 p-3">
             <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-zinc-400">🏆 Mejores Tiempos</p>
@@ -210,7 +122,6 @@ export function WinScreen(): React.JSX.Element | null {
           </div>
         )}
 
-        {/* Play again */}
         <button
           type="button"
           onClick={playAgain}
