@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useGameStore, getComboMultiplier, HINT_EXP_COST, HINT_AUTO_GLOW_THRESHOLD } from '@/store/gameStore';
+import { useGameStore, getComboMultiplier, HINT_EXP_COST } from '@/store/gameStore';
 import { useSettingsStore } from '@/store/settingsStore';
+import { useHitFlash } from '@/game/hooks/useHitFlash';
+import { HUDCrosshair } from './HUDCrosshair';
+import { HUDHintTip } from './HUDHintTip';
 
 function formatElapsed(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
@@ -20,7 +23,6 @@ export function HUD(): React.JSX.Element {
   const gnomeTarget = useGameStore((s) => s.gnomeTarget);
   const lastShotAt = useGameStore((s) => s.lastShotAt);
   const hitFlash = useGameStore((s) => s.hitFlash);
-  const clearHitFlash = useGameStore((s) => s.clearHitFlash);
   const comboDisplay = useGameStore((s) => s.comboDisplay);
   const shotsHit = useGameStore((s) => s.stats.shotsHit);
   const shotsFired = useGameStore((s) => s.stats.shotsFired);
@@ -28,6 +30,7 @@ export function HUD(): React.JSX.Element {
   const expSpent = useGameStore((s) => s.stats.expSpent);
   const hintActivatedAt = useGameStore((s) => s.hintActivatedAt);
   const totalExp = useSettingsStore((s) => s.totalExp);
+
   const availableExp = totalExpGained - expSpent;
   const found = gnomeTarget - remaining;
   const comboMult = getComboMultiplier(comboDisplay);
@@ -35,9 +38,8 @@ export function HUD(): React.JSX.Element {
 
   const [now, setNow] = useState<number>(0);
   const [shotAnim, setShotAnim] = useState(false);
-  const [showHitMarker, setShowHitMarker] = useState(false);
   const [comboAnim, setComboAnim] = useState(0);
-  const [shake, setShake] = useState({ x: 0, y: 0 });
+  const { showHitMarker, shake } = useHitFlash();
 
   useEffect(() => {
     if (status !== 'playing') return;
@@ -45,55 +47,18 @@ export function HUD(): React.JSX.Element {
     return () => { window.clearInterval(id); };
   }, [status]);
 
-  // Crosshair pulse on shot — defer to next frame to avoid sync setState in effect
   useEffect(() => {
     if (!lastShotAt) return;
     const raf = requestAnimationFrame(() => setShotAnim(true));
     const t = setTimeout(() => setShotAnim(false), 120);
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(t);
-    };
+    return () => { cancelAnimationFrame(raf); clearTimeout(t); };
   }, [lastShotAt]);
 
-  // Hit marker + screen shake
-  useEffect(() => {
-    if (!hitFlash) return;
-    const raf = requestAnimationFrame(() => setShowHitMarker(true));
-    const shakeCount = 4;
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i >= shakeCount) {
-        setShake({ x: 0, y: 0 });
-        clearInterval(interval);
-        return;
-      }
-      setShake({
-        x: (Math.random() - 0.5) * 4,
-        y: (Math.random() - 0.5) * 3,
-      });
-      i++;
-    }, 30);
-    const t = setTimeout(() => {
-      setShowHitMarker(false);
-      clearHitFlash();
-    }, 300);
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(t);
-      clearInterval(interval);
-    };
-  }, [hitFlash, clearHitFlash]);
-
-  // Combo animation — deferred to next frame
   useEffect(() => {
     if (comboDisplay < 2) return;
     const raf = requestAnimationFrame(() => setComboAnim(comboDisplay));
     const t = setTimeout(() => setComboAnim(0), 1200);
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(t);
-    };
+    return () => { cancelAnimationFrame(raf); clearTimeout(t); };
   }, [comboDisplay]);
 
   const elapsed = startedAt === null ? 0 : (endedAt ?? now) - startedAt;
@@ -105,52 +70,24 @@ export function HUD(): React.JSX.Element {
       className="pointer-events-none absolute inset-0 select-none text-white"
       style={{ transform: `translate(${shake.x}px, ${shake.y}px)` }}
     >
-      {/* Gnome counter */}
       <div className="absolute left-4 top-4 flex items-center gap-2">
         <div className="rounded-lg bg-black/60 px-3 py-1.5 font-mono text-sm tracking-wide backdrop-blur-sm">
           🧙 {found.toString().padStart(3, '0')} / {gnomeTarget}
         </div>
       </div>
 
-      {/* Timer */}
       <div className="absolute right-4 top-4 rounded-lg bg-black/60 px-3 py-1.5 font-mono text-sm tracking-wide backdrop-blur-sm">
         ⏱ {formatElapsed(elapsed)}
       </div>
 
-      {/* Stats bar */}
       <div className="absolute left-4 top-14 flex gap-2 text-xs">
         <div className="rounded bg-black/50 px-2 py-1 backdrop-blur-sm">
           🎯 {shotsHit}/{shotsFired}
         </div>
       </div>
 
-      {/* Crosshair */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div
-          className="relative transition-transform duration-100"
-          style={{ transform: shotAnim ? 'scale(1.5)' : 'scale(1)' }}
-        >
-          {/* Center dot */}
-          <div
-            className="absolute left-1/2 top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{ backgroundColor: showHitMarker ? '#fbbf24' : 'rgba(255,255,255,0.9)' }}
-          />
-          {/* Cross lines */}
-          <span className="absolute left-1/2 top-0 h-3 w-px -translate-x-1/2 bg-white/70" style={{ marginTop: '4px' }} />
-          <span className="absolute bottom-0 left-1/2 h-3 w-px -translate-x-1/2 bg-white/70" style={{ marginBottom: '-12px' }} />
-          <span className="absolute left-0 top-1/2 h-px w-3 -translate-y-1/2 bg-white/70" style={{ marginLeft: '-8px' }} />
-          <span className="absolute right-0 top-1/2 h-px w-3 -translate-y-1/2 bg-white/70" style={{ marginRight: '-8px' }} />
+      <HUDCrosshair shotAnim={shotAnim} showHitMarker={showHitMarker} />
 
-          {/* Hit marker X */}
-          {showHitMarker && (
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-ping">
-              <span className="text-lg font-bold text-yellow-400">✕</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Combo display */}
       {comboAnim >= 2 && (
         <div
           className="absolute left-1/2 -translate-x-1/2 animate-bounce font-bold"
@@ -162,7 +99,6 @@ export function HUD(): React.JSX.Element {
         </div>
       )}
 
-      {/* EXP earned this game (available wallet during match) + persistent total */}
       <div className="absolute left-4 top-24 flex flex-col gap-1">
         <div className="rounded bg-black/50 px-2 py-1 text-xs backdrop-blur-sm">
           🪙 {availableExp} EXP <span className="text-zinc-400">· ganado +{totalExpGained}</span>
@@ -172,45 +108,17 @@ export function HUD(): React.JSX.Element {
         </div>
       </div>
 
-      {/* Hint tip */}
-      {remaining > 0 && (
-        remaining <= HINT_AUTO_GLOW_THRESHOLD ? (
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full bg-amber-500/70 px-4 py-2 text-xs font-semibold text-white backdrop-blur-sm">
-            ✨ Auto-revelados — quedan {remaining}
-          </div>
-        ) : (() => {
-          const COOLDOWN_MS = 1500;
-          const msSince = hintActivatedAt !== null ? now - hintActivatedAt : COOLDOWN_MS;
-          const onCooldown = msSince < COOLDOWN_MS;
-          const cooldownPct = Math.min(msSince / COOLDOWN_MS, 1) * 100;
-          return (
-            <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
-              <div
-                className={`rounded-full px-4 py-2 text-xs font-semibold text-white backdrop-blur-sm transition ${
-                  onCooldown ? 'bg-zinc-700/80 opacity-60' :
-                  canAffordHint ? 'bg-cyan-500/80 animate-pulse' : 'bg-zinc-800/80 opacity-70'
-                }`}
-              >
-                💡 <kbd className="rounded bg-white/30 px-1">H</kbd> revelar · {HINT_EXP_COST} EXP
-                {onCooldown && <span className="ml-2 text-zinc-400">espera...</span>}
-                {!onCooldown && !canAffordHint && <span className="ml-2 text-red-300">insuficiente</span>}
-              </div>
-              {onCooldown && (
-                <div className="h-0.5 w-24 overflow-hidden rounded-full bg-zinc-700">
-                  <div className="h-full bg-cyan-400 transition-all duration-100" style={{ width: `${cooldownPct}%` }} />
-                </div>
-              )}
-            </div>
-          );
-        })()
-      )}
+      <HUDHintTip
+        remaining={remaining}
+        hintActivatedAt={hintActivatedAt}
+        now={now}
+        canAffordHint={canAffordHint}
+      />
 
-      {/* Hit flash border */}
       {hitFlash && (
         <div className="absolute inset-0 animate-pulse rounded-lg border-2 border-yellow-400/40" />
       )}
 
-      {/* Progress bar */}
       <div className="absolute bottom-6 left-1/2 w-64 -translate-x-1/2">
         <div className="h-1.5 overflow-hidden rounded-full bg-white/10 backdrop-blur-sm">
           <div

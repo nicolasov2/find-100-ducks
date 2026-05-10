@@ -3,10 +3,10 @@
 import { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import { Quaternion, Raycaster, Vector3 } from 'three';
-import type { Object3D } from 'three';
 import { useGameStore } from '@/store/gameStore';
 import { playLaserShot, playGnomeHit, initAudio } from '@/game/systems/AudioManager';
 import { WEAPONS } from '@/game/weapons/registry';
+import { findGnomeId, shouldIgnore } from '@/game/utils/raycastUtils';
 
 const RAY_ORIGIN = new Vector3();
 const FORWARD = new Vector3();
@@ -22,25 +22,6 @@ const raycaster = new Raycaster();
 const EMITTER_RIGHT = 0.28;
 const EMITTER_DOWN = 0.22;
 const EMITTER_FORWARD = 0.81;
-
-function findGnomeId(start: Object3D | null): string | null {
-  let curr: Object3D | null = start;
-  while (curr !== null) {
-    const id = curr.userData['gnomeId'];
-    if (typeof id === 'string') return id;
-    curr = curr.parent;
-  }
-  return null;
-}
-
-function shouldIgnore(start: Object3D | null): boolean {
-  let curr: Object3D | null = start;
-  while (curr !== null) {
-    if (curr.userData['raycastIgnore'] === true) return true;
-    curr = curr.parent;
-  }
-  return false;
-}
 
 export function Shooter(): null {
   const camera = useThree((s) => s.camera);

@@ -13,6 +13,7 @@ import {
 } from 'three';
 import { useGameStore } from '@/store/gameStore';
 import { WEAPONS } from '@/game/weapons/registry';
+import { LaserWeaponAttachments } from './LaserWeaponAttachments';
 
 const BODY_GEOM = new BoxGeometry(0.08, 0.06, 0.18);
 const HANDLE_GEOM = new BoxGeometry(0.05, 0.1, 0.07);
@@ -116,35 +117,7 @@ export function LaserGun(): React.JSX.Element {
       />
       <mesh position={[0, 0, -0.26]} geometry={EMITTER_GEOM} material={emitterMat} />
 
-      {/* Sniper scope */}
-      {weapon.hasScope && (
-        <>
-          <mesh position={[0, 0.05, -0.05]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.022, 0.022, 0.18, 12]} />
-            <meshStandardMaterial color="#1f1f23" metalness={0.7} roughness={0.3} />
-          </mesh>
-          <mesh position={[0, 0.05, 0.04]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.028, 0.028, 0.04, 12]} />
-            <meshStandardMaterial color={weapon.beamColor} emissive={weapon.beamColor} emissiveIntensity={0.4} />
-          </mesh>
-        </>
-      )}
-
-      {/* Plasma spreader extra emitters */}
-      {weapon.multiShot > 1 && (
-        <>
-          <mesh position={[0.04, 0, -0.26]} geometry={EMITTER_GEOM} material={emitterMat} />
-          <mesh position={[-0.04, 0, -0.26]} geometry={EMITTER_GEOM} material={emitterMat} />
-        </>
-      )}
-
-      {/* Rifle barrel extension */}
-      {weapon.id === 'laser-rifle' && (
-        <mesh position={[0, 0, -0.30]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.024, 0.024, 0.12, 12]} />
-          <meshStandardMaterial color="#52525b" metalness={0.9} roughness={0.3} />
-        </mesh>
-      )}
+      <LaserWeaponAttachments weapon={weapon} emitterMat={emitterMat} />
 
       {/* Flashlight ring (visual) */}
       <mesh

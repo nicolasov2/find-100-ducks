@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
+import { Group, MeshStandardMaterial, Vector3 } from 'three';
 import {
   HINT_AUTO_GLOW_THRESHOLD,
   HINT_DURATION_MS,
@@ -10,6 +10,7 @@ import {
 } from '@/store/gameStore';
 import { SAFE_SPAWN_POOL } from '@/game/utils/safeSpawnPool';
 import { GnomeModel } from '@/game/components/GnomeModel';
+import { useGnomeMeshCache } from '@/game/hooks/useGnomeMeshCache';
 
 const BOB_AMPLITUDE = 0.025;
 const BOB_FREQ = 1.5;
@@ -24,20 +25,8 @@ export function Gnomes(): React.JSX.Element {
   const hintActivatedAt = useGameStore((s) => s.hintActivatedAt);
   const containerRef = useRef<Group | null>(null);
   const camera = useThree((s) => s.camera);
-
-  // Mesh cache — rebuilt once when gnomes change, not every frame.
-  // Stores Mesh refs per gnome so we can update material + renderOrder directly.
-  const meshCacheRef = useRef<Mesh[][]>([]);
-  // Typed arrays for fast prev-state comparison (skip writes when nothing changed).
-  const prevIntensityRef = useRef(new Float32Array(0));
-  const prevEmissiveRef = useRef(new Uint32Array(0));
-  const prevDepthTestRef = useRef(new Uint8Array(0));
-  // Dirty flag: set when gnomes array changes, cleared after first frame rebuild.
-  const cacheDirtyRef = useRef(true);
-
-  useEffect(() => {
-    cacheDirtyRef.current = true;
-  }, [gnomes]);
+  const { meshCacheRef, prevIntensityRef, prevEmissiveRef, prevDepthTestRef, rebuildIfDirty } =
+    useGnomeMeshCache(gnomes);
 
   useEffect(() => {
     if (gnomes.length === 0) {
@@ -52,24 +41,7 @@ export function Gnomes(): React.JSX.Element {
     const container = containerRef.current;
     if (!container) return;
 
-    // Rebuild material cache once after gnomes change (O(n) traverse, not every frame).
-    if (cacheDirtyRef.current) {
-      const cache: Mesh[][] = [];
-      for (let i = 0; i < container.children.length; i++) {
-        const meshes: Mesh[] = [];
-        container.children[i]?.traverse((obj) => {
-          if (obj instanceof Mesh && obj.material instanceof MeshStandardMaterial) {
-            meshes.push(obj);
-          }
-        });
-        cache.push(meshes);
-      }
-      meshCacheRef.current = cache;
-      prevIntensityRef.current = new Float32Array(cache.length).fill(-1);
-      prevEmissiveRef.current = new Uint32Array(cache.length).fill(0xffffffff);
-      prevDepthTestRef.current = new Uint8Array(cache.length).fill(255);
-      cacheDirtyRef.current = false;
-    }
+    rebuildIfDirty(container);
 
     const t = state.clock.elapsedTime;
     const camPos = camera.position;
