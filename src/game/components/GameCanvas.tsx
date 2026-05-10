@@ -21,6 +21,7 @@ import { ScopeOverlay } from '@/game/components/ScopeOverlay';
 import { HUD } from '@/game/components/HUD';
 import { WinScreen } from '@/game/components/WinScreen';
 import { PauseMenu } from '@/game/components/PauseMenu';
+import { LoveNote } from '@/game/components/LoveNote';
 import { DustMotes } from '@/game/components/DustMotes';
 import { Room1 } from '@/game/rooms/room1';
 import { Hallway1 } from '@/game/rooms/hallway1';
@@ -105,6 +106,7 @@ export function GameCanvas(): React.JSX.Element {
         <PointerLockControls pointerSpeed={sensitivity} />
       </Canvas>
       <HUD />
+      <LoveNote />
       <LockOverlay />
       <PauseMenu />
       <ScopeOverlay />

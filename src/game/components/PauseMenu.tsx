@@ -40,6 +40,10 @@ export function PauseMenu(): React.JSX.Element | null {
     spawnGnomes(SAFE_SPAWN_POOL, config.gnomeCount);
   };
 
+  const handleResume = (): void => {
+    (document.querySelector('canvas') as HTMLElement | null)?.requestPointerLock();
+  };
+
   const handleQuit = (): void => {
     stopMusic();
     reset();
@@ -50,10 +54,6 @@ export function PauseMenu(): React.JSX.Element | null {
     <div className="pointer-events-auto absolute inset-0 z-20 flex items-center justify-center bg-black/70 text-white backdrop-blur-sm">
       <div className="flex w-80 flex-col gap-4 rounded-2xl border border-white/10 bg-zinc-900/95 p-6 backdrop-blur-xl">
         <h2 className="text-center text-2xl font-bold">⏸ Pausa</h2>
-
-        <p className="text-center text-sm text-zinc-400">
-          Haz clic en la pantalla para continuar
-        </p>
 
         <div className="space-y-3 rounded-xl bg-white/5 p-4">
           <label className="flex items-center justify-between text-sm">
@@ -114,6 +114,13 @@ export function PauseMenu(): React.JSX.Element | null {
         </div>
 
         <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={handleResume}
+            className="rounded-lg bg-green-600/80 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-500/80"
+          >
+            ▶ Reanudar
+          </button>
           <button
             type="button"
             onClick={handleRestart}
