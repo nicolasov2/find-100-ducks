@@ -11,11 +11,10 @@ import {
 import { SAFE_SPAWN_POOL } from '@/game/utils/safeSpawnPool';
 import { GnomeModel } from '@/game/components/GnomeModel';
 import { useGnomeMeshCache } from '@/game/hooks/useGnomeMeshCache';
+import { useSettingsStore, getDifficultyConfig } from '@/store/settingsStore';
 
 const BOB_AMPLITUDE = 0.025;
 const BOB_FREQ = 1.5;
-const GLOW_DISTANCE = 5;
-const GLOW_FADE_START = 3;
 
 const _gnomePos = new Vector3();
 
@@ -25,6 +24,8 @@ export function Gnomes(): React.JSX.Element {
   const hintActivatedAt = useGameStore((s) => s.hintActivatedAt);
   const containerRef = useRef<Group | null>(null);
   const camera = useThree((s) => s.camera);
+  const difficulty = useSettingsStore((s) => s.difficulty);
+  const { glowDistance, glowFadeStart } = getDifficultyConfig(difficulty);
   const { meshCacheRef, prevIntensityRef, prevEmissiveRef, prevDepthTestRef, rebuildIfDirty } =
     useGnomeMeshCache(gnomes);
 
@@ -76,11 +77,11 @@ export function Gnomes(): React.JSX.Element {
         const pulse = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(t * 5 + phase));
         intensity = pulse * 1.5;
         emissiveHex = hintActive ? 0x22d3ee : 0xfbbf24;
-      } else if (dist < GLOW_DISTANCE) {
+      } else if (glowDistance > 0 && dist < glowDistance) {
         const glowIntensity =
-          dist < GLOW_FADE_START
+          dist < glowFadeStart
             ? 1
-            : 1 - (dist - GLOW_FADE_START) / (GLOW_DISTANCE - GLOW_FADE_START);
+            : 1 - (dist - glowFadeStart) / (glowDistance - glowFadeStart);
         const pulse = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * 4 + phase));
         intensity = glowIntensity * pulse * 0.6;
       }

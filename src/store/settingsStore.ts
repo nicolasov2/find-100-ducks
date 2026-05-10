@@ -123,8 +123,8 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 /* Difficulty presets */
 export function getDifficultyConfig(d: Difficulty) {
   switch (d) {
-    case 'easy': return { gnomeCount: 150, glowDistance: 8, glowFadeStart: 5, scaleMin: 0.5 };
-    case 'normal': return { gnomeCount: 100, glowDistance: 5, glowFadeStart: 3, scaleMin: 0.35 };
-    case 'hard': return { gnomeCount: 100, glowDistance: 0, glowFadeStart: 0, scaleMin: 0.25 };
+    case 'easy': return { gnomeCount: 150, glowDistance: 6, glowFadeStart: 3, scaleMin: 0.5 };
+    case 'normal': return { gnomeCount: 100, glowDistance: 2.5, glowFadeStart: 1, scaleMin: 0.35 };
+    case 'hard': return { gnomeCount: 100, glowDistance: 0, glowFadeStart: 0, scaleMin: 0.2 };
   }
 }

@@ -46,6 +46,28 @@ const POSITIONS: readonly Vector3Tuple[] = [
   [CX + 3, 0.08, CZ - 4], [CX - 3, 0.08, CZ - 4],
   [CX + 5, 0.08, CZ - 2], [CX - 5, 0.08, CZ - 2],
   [CX + 3, 0.08, CZ + 2], [CX - 3, 0.08, CZ + 2],
+  // ── East wing expansion (x: 12–16) — 7 points ──
+  [CX + 12, 0.08, CZ - 4], [CX + 14, 0.08, CZ + 1],
+  [CX + 13, 0.08, CZ + 7], [CX + 15, 0.08, CZ - 2],
+  [CX + 14, 2.2, CZ + 3],  // in east tree foliage
+  [CX + 13, 2.0, CZ + 10], // in east tree foliage
+  [CX + 12, 0.08, CZ + 5],
+  // ── West wing expansion (x: -12 to -16) — 7 points ──
+  [CX - 12, 0.08, CZ - 3], [CX - 14, 0.08, CZ + 2],
+  [CX - 13, 0.08, CZ + 8], [CX - 15, 0.08, CZ - 1],
+  [CX - 14, 2.2, CZ + 4],  // in west tree foliage
+  [CX - 13, 2.0, CZ + 10], // in west tree foliage
+  [CX - 12, 0.08, CZ + 6],
+  // ── South extension (z: CZ+10 to CZ+15) — 10 points ──
+  [CX - 8, 0.08, CZ + 12], // near stone well
+  [CX + 9, 0.08, CZ + 14], // near tool shed side
+  [CX + 11, 0.08, CZ + 13],// behind tool shed
+  [CX - 4, 0.08, CZ + 11], // in hedge gap
+  [CX + 1, 0.08, CZ + 11], // in hedge gap
+  [CX, 0.08, CZ + 14],     // behind big bush
+  [CX - 5, 0.08, CZ + 13], // near south bench
+  [CX - 12, 0.08, CZ + 10],[CX + 12, 0.08, CZ + 10],
+  [CX - 4, 2.2, CZ + 15],  // in south tree foliage
 ];
 
 // Intentional low-y hiding spots inside collider bounds that bypass AABB filter.
