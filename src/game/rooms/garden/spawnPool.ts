@@ -1,87 +1,47 @@
-import type { Vector3Tuple } from 'three';
+import { Vector3, type Vector3Tuple } from 'three';
 import type { SpawnPoint } from '@/game/types';
+import { GARDEN_AABBS } from './roomAabbs';
 
-const CX = 0;
-const CZ = 22;
+// Gnomes hide ON the open lawn, never inside vegetation. Floor points are
+// generated on a jittered grid and any cell overlapping a furniture AABB is
+// dropped — so adding/moving an item automatically clears its footprint.
 
-const POSITIONS: readonly Vector3Tuple[] = [
-  // ── Inside / behind bushes (10) ──
-  [CX - 3, 0.10, CZ - 5], [CX + 3, 0.10, CZ - 5],
-  [CX - 6, 0.10, CZ + 1], [CX + 6, 0.10, CZ + 1],
-  [CX - 4, 0.10, CZ + 5], [CX + 4, 0.10, CZ + 6],
-  [CX, 0.10, CZ + 7], [CX - 7, 0.10, CZ + 7],
-  [CX + 7, 0.10, CZ + 7], [CX - 1, 0.10, CZ + 9],
-  // ── Near trees, base (6) ──
-  [CX - 9, 0.02, CZ + 8], [CX + 9, 0.02, CZ + 8],
-  [CX - 9, 0.02, CZ + 4], [CX + 9, 0.02, CZ + 2],
-  [CX + 7, 0.02, CZ - 7], [CX - 7, 0.02, CZ - 7],
-  // ── Up in tree foliage (6) — high spots ──
-  [CX - 9, 2.4, CZ + 8.5], [CX + 9, 2.4, CZ + 8.5],
-  [CX - 9, 2.2, CZ + 4], [CX + 9, 2.2, CZ + 2],
-  [CX + 7, 2.0, CZ - 7], [CX - 7, 2.2, CZ - 7],
-  // ── Sunflower bases (4) ──
-  [CX - 8, 0.02, CZ + 3], [CX - 7.4, 0.02, CZ + 3.5],
-  [CX + 8, 0.02, CZ + 4.5], [CX + 7.4, 0.02, CZ + 5],
-  // ── Behind bench / on bench seat (4) ──
-  [CX - 4, 0.50, CZ + 2], [CX + 4, 0.50, CZ + 2],
-  [CX - 4.5, 0.02, CZ + 2.5], [CX + 4.5, 0.02, CZ + 2.5],
-  // ── Bird bath base + on basin (3) ──
-  [CX, 0.10, CZ + 2.5], [CX, 0.95, CZ + 2],
-  [CX + 0.4, 0.02, CZ + 2.4],
-  // ── Mushroom clusters — beside (3) ──
-  [CX - 8, 0.10, CZ + 7], [CX + 8, 0.10, CZ + 7],
-  [CX - 7.5, 0.10, CZ + 5],
-  // ── Inside boxes (2) ──
-  [CX + 7, 0.40, CZ + 5], [CX - 7, 0.40, CZ + 5],
-  // ── Stone path (2) — out in open ──
-  [CX, 0.02, CZ - 6], [CX, 0.02, CZ - 4],
-  // ── Planters near house wall (4) ──
-  [CX - 10, 0.45, CZ - 2], [CX + 10, 0.45, CZ - 2],
-  [CX - 5, 0.55, CZ - 4], [CX + 5, 0.55, CZ - 4],
-  // ── Far corners + along fences (6) ──
-  [CX - 10.5, 0.02, CZ - 9.5], [CX + 10.5, 0.02, CZ - 9.5],
-  [CX - 10.5, 0.02, CZ + 9.5], [CX + 10.5, 0.02, CZ + 9.5],
-  [CX, 0.02, CZ + 9.8], [CX - 10.5, 0.02, CZ],
-  // ── Open clear floor — away from all vegetation (6) ──
-  [CX + 3, 0.02, CZ - 4], [CX - 3, 0.02, CZ - 4],
-  [CX + 5, 0.02, CZ - 2], [CX - 5, 0.02, CZ - 2],
-  [CX + 3, 0.02, CZ + 2], [CX - 3, 0.02, CZ + 2],
-  // ── East wing expansion (x: 12–16) — 7 points ──
-  [CX + 12, 0.02, CZ - 4], [CX + 14, 0.02, CZ + 1],
-  [CX + 13, 0.02, CZ + 7], [CX + 15, 0.02, CZ - 2],
-  [CX + 14, 2.2, CZ + 3],  // in east tree foliage
-  [CX + 13, 2.0, CZ + 10], // in east tree foliage
-  [CX + 12, 0.02, CZ + 5],
-  // ── West wing expansion (x: -12 to -16) — 7 points ──
-  [CX - 12, 0.02, CZ - 3], [CX - 14, 0.02, CZ + 2],
-  [CX - 13, 0.02, CZ + 8], [CX - 15, 0.02, CZ - 1],
-  [CX - 14, 2.2, CZ + 4],  // in west tree foliage
-  [CX - 13, 2.0, CZ + 10], // in west tree foliage
-  [CX - 12, 0.02, CZ + 6],
-  // ── South extension (z: CZ+10 to CZ+15) — 10 points ──
-  [CX - 8, 0.02, CZ + 12], // near stone well
-  [CX + 9, 0.02, CZ + 14], // near tool shed side
-  [CX + 11, 0.02, CZ + 13],// behind tool shed
-  [CX - 4, 0.02, CZ + 11], // in hedge gap
-  [CX + 1, 0.02, CZ + 11], // in hedge gap
-  [CX, 0.02, CZ + 14],     // behind big bush
-  [CX - 5, 0.02, CZ + 13], // near south bench
-  [CX - 12, 0.02, CZ + 10],[CX + 12, 0.02, CZ + 10],
-  [CX - 4, 2.2, CZ + 15],  // in south tree foliage
-];
+const FLOOR_Y = 0.04;
+const PADDING = 0.45;        // > filter padding (0.35) so every point survives the SAFE filter
+const STEP = 2.2;
+const X_MIN = -15.5, X_MAX = 15.5;
+const Z_MIN = 13.5, Z_MAX = 37;
 
-// Intentional low-y hiding spots inside collider bounds that bypass AABB filter.
-// NOTE: bush-inside spots (formerly 0-9) are REMOVED — gnomos should not spawn
-// physically inside bush meshes. They are now AABB-filtered out.
-const INSIDE_FURNITURE = new Set([22, 23, 24, 25, 30, 32, 33, 34, 35]);
-const BYPASS = new Set([
-  ...POSITIONS.flatMap((p, i) => (p[1] > 0.15 ? [i] : [])),
-  ...INSIDE_FURNITURE,
-]);
+// Keep the north entry corridor clear so the player can walk in from Hallway3.
+const ENTRY_HALF_W = 1.6;
+const ENTRY_Z_MAX = 19;
 
-export const SPAWN_POOL_GARDEN: readonly SpawnPoint[] = POSITIONS.map((p, i) => ({
+// Deterministic pseudo-random offset in [-amp, amp] — organic look, stable build.
+function jitter(a: number, b: number, amp: number): number {
+  const h = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453;
+  return ((h - Math.floor(h)) - 0.5) * 2 * amp;
+}
+
+function isOpen(x: number, z: number): boolean {
+  if (Math.abs(x) < ENTRY_HALF_W && z < ENTRY_Z_MAX) return false;
+  const pt = new Vector3(x, FLOOR_Y, z);
+  return !GARDEN_AABBS.some((box) => box.clone().expandByScalar(PADDING).containsPoint(pt));
+}
+
+function buildPositions(): Vector3Tuple[] {
+  const out: Vector3Tuple[] = [];
+  for (let gx = X_MIN; gx <= X_MAX + 1e-6; gx += STEP) {
+    for (let gz = Z_MIN; gz <= Z_MAX + 1e-6; gz += STEP) {
+      const x = Math.round((gx + jitter(gx, gz, 0.55)) * 100) / 100;
+      const z = Math.round((gz + jitter(gz, gx, 0.55)) * 100) / 100;
+      if (isOpen(x, z)) out.push([x, FLOOR_Y, z]);
+    }
+  }
+  return out;
+}
+
+export const SPAWN_POOL_GARDEN: readonly SpawnPoint[] = buildPositions().map((p, i) => ({
   id: `r4-${String(i + 1).padStart(3, '0')}`,
   position: p,
   roomId: 'garden',
-  ...(BYPASS.has(i) ? { bypassAabb: true as const } : {}),
 }));

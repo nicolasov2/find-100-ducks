@@ -8,6 +8,7 @@ import { LOCAL_BOUNDS as CHAIR } from '@/game/rooms/room1/furniture/Chair';
 import { LOCAL_BOUNDS as COUNTER } from './furniture/Counter';
 import { LOCAL_BOUNDS as FLOOR_CUSHION } from '@/game/rooms/room1/furniture/FloorCushion';
 import { LOCAL_BOUNDS as FRIDGE } from './furniture/Fridge';
+import { LOCAL_BOUNDS as FRUIT_BOWL } from './furniture/FruitBowl';
 import { LOCAL_BOUNDS as MICROWAVE } from './furniture/Microwave';
 import { LOCAL_BOUNDS as OVEN } from './furniture/Oven';
 import { LOCAL_BOUNDS as PLANT } from '@/game/rooms/room1/furniture/Plant';
@@ -65,6 +66,8 @@ export const ROOM2_AABBS: readonly Box3[] = [
   worldAabb(FLOOR_CUSHION, [CX - 5, 0, CZ + 4], 0.3),
   // BookStack on counter
   worldAabb(BOOK_STACK, [CX + 1.5, 0.98, CZ - HD + 0.6]),
+  // Fruit bowl on counter
+  worldAabb(FRUIT_BOWL, [CX + 0.5, 0.98, CZ - HD + 0.6]),
   // Pot racks (ceiling; included for y-range correctness)
   worldAabb(POT_RACK, [CX, 2.7, CZ + 1]),
   worldAabb(POT_RACK, [CX - 4, 2.7, CZ - 2]),

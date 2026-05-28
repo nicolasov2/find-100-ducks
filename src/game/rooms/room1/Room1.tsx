@@ -15,11 +15,30 @@ import { WallPainting } from './furniture/WallPainting';
 import { SideTable } from './furniture/SideTable';
 import { PlanterBox } from './furniture/PlanterBox';
 import { Pouf } from './furniture/Pouf';
+import { CeilingLight } from './furniture/CeilingLight';
+import { WindowFrame } from './furniture/WindowFrame';
+import { Rug } from '@/game/rooms/room3/furniture/Rug';
 
 export function Room1(): React.JSX.Element {
   return (
     <group>
       <Room1Walls />
+
+      {/* ── Rugs ── */}
+      <Rug position={[0, 0, 0]} width={4.5} depth={3.5} />
+      <Rug position={[-4.5, 0, 7]} width={5} depth={3.5} />
+      <Rug position={[6, 0, -7]} width={3.5} depth={2.5} />
+
+      {/* ── Ceiling lights ── */}
+      <CeilingLight position={[0, 0, 0]} />
+      <CeilingLight position={[-4, 0, 6.5]} intensity={3} color="#fff3cd" />
+      <CeilingLight position={[6, 0, -7]} intensity={3} color="#fff3cd" />
+
+      {/* ── Windows (north wall + west wall) ── */}
+      <WindowFrame position={[-3.5, 1.5, -9.82]} />
+      <WindowFrame position={[4.5, 1.5, -9.82]} />
+      <WindowFrame position={[-9.82, 1.5, -4]} rotationY={Math.PI / 2} />
+      <WindowFrame position={[-9.82, 1.5, 4]} rotationY={Math.PI / 2} />
 
       {/* ── Dining area ── */}
       <Table />

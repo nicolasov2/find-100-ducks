@@ -18,6 +18,9 @@ import { Shelf } from '@/game/rooms/room1/furniture/Shelf';
 import { PotRack } from './furniture/PotRack';
 import { Broom } from './furniture/Broom';
 import { PlanterBox } from '@/game/rooms/room1/furniture/PlanterBox';
+import { CeilingLight } from '@/game/rooms/room1/furniture/CeilingLight';
+import { WallClock } from '@/game/rooms/room3/furniture/WallClock';
+import { WindowFrame } from '@/game/rooms/room1/furniture/WindowFrame';
 
 const CX = 28;
 const CZ = 0;
@@ -87,10 +90,18 @@ export function Room2(): React.JSX.Element {
       {/* ── Herb planter near window ── */}
       <PlanterBox position={[CX + HW - 0.4, 1.0, CZ - HD + 0.6]} rotationY={0} />
 
+      {/* ── Ceiling lights ── */}
+      <CeilingLight position={[CX, 0, CZ + 2]} />
+      <CeilingLight position={[CX - 1, 0, CZ - HD + 1.5]} color="#fff0d0" intensity={3} />
+
+      {/* ── Wall clock + window ── */}
+      <WallClock position={[CX - 3, 2.6, CZ - HD + 0.12]} />
+      <WindowFrame position={[CX + HW - 0.12, 1.5, CZ + 3.5]} rotationY={-Math.PI / 2} />
+
       {/* ── Lighting ── */}
-      <pointLight position={[CX, 3.5, CZ]} intensity={8} distance={12} decay={2} color="#fef3c7" />
-      <pointLight position={[CX - 3, 3.5, CZ - 3]} intensity={4} distance={8} decay={2} color="#fef3c7" />
-      <pointLight position={[CX + 4, 3.5, CZ + 3]} intensity={3} distance={8} decay={2} color="#fef3c7" />
+      <pointLight position={[CX, 3.5, CZ]} intensity={4} distance={12} decay={2} color="#fef3c7" />
+      <pointLight position={[CX - 3, 3.5, CZ - 3]} intensity={3} distance={8} decay={2} color="#fef3c7" />
+      <pointLight position={[CX + 4, 3.5, CZ + 3]} intensity={2} distance={8} decay={2} color="#fef3c7" />
     </group>
   );
 }
