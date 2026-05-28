@@ -1,21 +1,16 @@
-// South extension + east/west wings of the expanded garden.
-// CX=0, CZ=22 kept as anchors matching the main Garden.tsx.
+// Solid structures of the expanded garden. Repeatable furniture (trees, bushes,
+// hedges, etc.) now lives in GARDEN_ITEMS; only the bespoke shed + well remain
+// here, anchored to the shared positions in layout.ts so their AABBs stay synced.
 
-import { Bush } from './furniture/Bush';
-import { Tree } from './furniture/Tree';
-import { Sunflower } from './furniture/Sunflower';
-import { MushroomCluster } from './furniture/MushroomCluster';
-import { GardenBench } from './furniture/GardenBench';
-import { Plant } from '@/game/rooms/room1/furniture/Plant';
-import { CardboardBox } from '@/game/rooms/room1/furniture/CardboardBox';
+import { TOOL_SHED_POS, STONE_WELL_POS } from './layout';
 
 const CX = 0;
 const CZ = 22;
 
-// Tool shed — purely visual, creates corners for gnome hiding
+// Tool shed — visual; its footprint is collision-filtered via TOOL_SHED_BOUNDS.
 function ToolShed(): React.JSX.Element {
   return (
-    <group position={[CX + 9, 0, CZ + 14]}>
+    <group position={TOOL_SHED_POS}>
       <mesh position={[0, 1.3, 0]} castShadow>
         <boxGeometry args={[4.5, 2.6, 3.5]} />
         <meshStandardMaterial color="#a16207" roughness={0.9} />
@@ -32,10 +27,10 @@ function ToolShed(): React.JSX.Element {
   );
 }
 
-// Stone well
+// Stone well — visual; filtered via STONE_WELL_BOUNDS.
 function StoneWell(): React.JSX.Element {
   return (
-    <group position={[CX - 8, 0, CZ + 12]}>
+    <group position={STONE_WELL_POS}>
       <mesh position={[0, 0.5, 0]} castShadow>
         <cylinderGeometry args={[0.6, 0.65, 1, 10]} />
         <meshStandardMaterial color="#78716c" roughness={0.95} />
@@ -48,73 +43,11 @@ function StoneWell(): React.JSX.Element {
   );
 }
 
-// Hedge (visual wall made of bushes)
-function HedgeRow({ x, z, count, rotationY = 0 }: { x: number; z: number; count: number; rotationY?: number }): React.JSX.Element {
-  return (
-    <>
-      {Array.from({ length: count }, (_, i) => (
-        <Bush
-          key={i}
-          position={[
-            x + (rotationY === 0 ? i * 1.4 : 0),
-            0,
-            z + (rotationY === 0 ? 0 : i * 1.4),
-          ]}
-          scale={1.1}
-        />
-      ))}
-    </>
-  );
-}
-
 export function GardenExtension(): React.JSX.Element {
   return (
     <>
-      {/* ── East wing (x: 12–16) ── */}
-      <Tree position={[14, 0, CZ - 7]} scale={1.0} />
-      <Tree position={[15, 0, CZ + 3]} scale={1.2} />
-      <Tree position={[13, 0, CZ + 10]} scale={0.9} />
-      <Bush position={[12, 0, CZ - 4]} scale={1.0} flowerColor="#fbbf24" />
-      <Bush position={[14, 0, CZ + 1]} scale={1.1} />
-      <Bush position={[13, 0, CZ + 7]} scale={0.95} flowerColor="#f472b6" />
-      <Sunflower position={[15, 0, CZ - 2]} scale={1.1} />
-      <Sunflower position={[15.5, 0, CZ - 1.4]} scale={0.9} />
-      <Sunflower position={[14.5, 0, CZ - 2.6]} scale={1.0} />
-      <MushroomCluster position={[12.5, 0, CZ + 5]} />
-      <Plant position={[16, 0, CZ + 9]} />
-
-      {/* ── West wing (x: -12 to -16) ── */}
-      <Tree position={[-14, 0, CZ - 7]} scale={1.05} />
-      <Tree position={[-15, 0, CZ + 4]} scale={1.1} />
-      <Tree position={[-13, 0, CZ + 10]} scale={0.88} />
-      <Bush position={[-12, 0, CZ - 3]} scale={1.0} flowerColor="#a78bfa" />
-      <Bush position={[-14, 0, CZ + 2]} scale={1.15} flowerColor="#fb7185" />
-      <Bush position={[-13, 0, CZ + 8]} scale={1.0} />
-      <Sunflower position={[-15, 0, CZ - 1]} scale={1.0} />
-      <Sunflower position={[-15.5, 0, CZ - 1.8]} scale={0.9} />
-      <MushroomCluster position={[-12.5, 0, CZ + 6]} />
-      <Plant position={[-16, 0, CZ + 8]} />
-
-      {/* ── South extension (z: CZ+10 to CZ+15) ── */}
       <ToolShed />
       <StoneWell />
-      <HedgeRow x={CX - 6} z={CZ + 11} count={4} />
-      <HedgeRow x={CX + 2} z={CZ + 11} count={3} />
-      <Tree position={[CX - 12, 0, CZ + 13]} scale={1.1} />
-      <Tree position={[CX + 12, 0, CZ + 13]} scale={0.95} />
-      <Tree position={[CX - 4, 0, CZ + 15]} scale={1.0} />
-      <Bush position={[CX + 4, 0, CZ + 15]} scale={1.2} flowerColor="#fbbf24" />
-      <Bush position={[CX - 13, 0, CZ + 10]} scale={1.0} />
-      <Bush position={[CX + 13, 0, CZ + 10]} scale={1.1} flowerColor="#f472b6" />
-      <Bush position={[CX, 0, CZ + 14]} scale={1.3} flowerColor="#a78bfa" />
-      <GardenBench position={[CX - 5, 0, CZ + 13]} rotationY={0} />
-      <CardboardBox position={[CX + 13, 0, CZ + 14]} rotationY={0.5} />
-      <CardboardBox position={[CX - 11, 0, CZ + 12]} rotationY={-0.3} />
-      <MushroomCluster position={[CX - 3, 0, CZ + 13]} />
-      <MushroomCluster position={[CX + 6, 0, CZ + 12]} />
-      <Sunflower position={[CX - 10, 0, CZ + 12]} scale={1.1} />
-      <Sunflower position={[CX - 9.4, 0, CZ + 12.6]} scale={0.9} />
-      <Sunflower position={[CX + 10, 0, CZ + 11]} scale={1.0} />
 
       {/* Extra fill lights for extended area */}
       <pointLight position={[14, 4, CZ + 5]} intensity={1.2} distance={14} decay={2} color="#fff7d6" />

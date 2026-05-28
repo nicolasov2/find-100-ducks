@@ -1,13 +1,5 @@
 import { RigidBody } from '@react-three/rapier';
-import { Tree } from './furniture/Tree';
-import { Bush } from './furniture/Bush';
-import { GardenBench } from './furniture/GardenBench';
-import { BirdBath } from './furniture/BirdBath';
-import { Sunflower } from './furniture/Sunflower';
-import { MushroomCluster } from './furniture/MushroomCluster';
-import { PlanterBox } from '@/game/rooms/room1/furniture/PlanterBox';
-import { Plant } from '@/game/rooms/room1/furniture/Plant';
-import { CardboardBox } from '@/game/rooms/room1/furniture/CardboardBox';
+import { GardenItems } from './GardenItems';
 import { GardenExtension } from './GardenExtension';
 
 // Width expanded east/west. CZ=22 & north wall at z=12 stay put (Hallway3 connection).
@@ -74,53 +66,10 @@ export function Garden(): React.JSX.Element {
         </mesh>
       </RigidBody>
 
-      {/* ── Trees ── */}
-      <Tree position={[CX - 9.5, 0, CZ + 8]} scale={1.1} />
-      <Tree position={[CX + 9.5, 0, CZ + 8]} scale={1.0} />
-      <Tree position={[CX - 9, 0, CZ + 4]} scale={0.9} />
-      <Tree position={[CX + 9, 0, CZ + 2]} scale={1.2} />
-      <Tree position={[CX + 7, 0, CZ - 7]} scale={0.85} />
-      <Tree position={[CX - 7, 0, CZ - 7]} scale={0.95} />
+      {/* ── Furniture (data-driven: GARDEN_ITEMS feeds both render and AABBs) ── */}
+      <GardenItems />
 
-      {/* ── Bushes ── */}
-      <Bush position={[CX - 3, 0, CZ - 5]} scale={1.1} flowerColor="#f472b6" />
-      <Bush position={[CX + 3, 0, CZ - 5]} scale={0.9} />
-      <Bush position={[CX - 6, 0, CZ + 1]} flowerColor="#fbbf24" />
-      <Bush position={[CX + 6, 0, CZ + 1]} scale={1.2} />
-      <Bush position={[CX - 4, 0, CZ + 5]} scale={0.85} flowerColor="#fb7185" />
-      <Bush position={[CX + 4, 0, CZ + 6]} flowerColor="#a78bfa" />
-      <Bush position={[CX, 0, CZ + 7]} scale={1.3} flowerColor="#fbbf24" />
-      <Bush position={[CX - 7, 0, CZ + 7]} scale={0.95} />
-      <Bush position={[CX + 7, 0, CZ + 7]} flowerColor="#f472b6" />
-      <Bush position={[CX - 1, 0, CZ + 9]} scale={1.0} />
-
-      {/* ── Sunflowers ── */}
-      <Sunflower position={[CX - 5, 0, CZ + 3]} scale={1.0} />
-      <Sunflower position={[CX - 5.6, 0, CZ + 3.5]} scale={0.9} />
-      <Sunflower position={[CX + 5, 0, CZ + 4.5]} scale={1.1} />
-      <Sunflower position={[CX + 5.6, 0, CZ + 5]} scale={0.85} />
-
-      {/* ── Benches + bird bath ── */}
-      <GardenBench position={[CX - 4, 0, CZ + 2]} rotationY={Math.PI / 2} />
-      <GardenBench position={[CX + 4, 0, CZ + 2]} rotationY={-Math.PI / 2} />
-      <BirdBath position={[CX, 0, CZ + 2]} />
-
-      {/* ── Mushroom clusters ── */}
-      <MushroomCluster position={[CX - 8.5, 0, CZ + 7]} />
-      <MushroomCluster position={[CX + 8.5, 0, CZ + 7]} />
-      <MushroomCluster position={[CX - 5, 0, CZ + 5]} />
-
-      {/* ── Planters + plants ── */}
-      <PlanterBox position={[CX - 9, 0, CZ - 2]} rotationY={Math.PI / 2} />
-      <PlanterBox position={[CX + 9, 0, CZ - 2]} rotationY={Math.PI / 2} />
-      <Plant position={[CX - 5, 0, CZ - 4]} />
-      <Plant position={[CX + 5, 0, CZ - 4]} />
-
-      {/* ── Boxes ── */}
-      <CardboardBox position={[CX + 7, 0, CZ + 5]} rotationY={0.4} />
-      <CardboardBox position={[CX - 7, 0, CZ + 5]} rotationY={-0.3} />
-
-      {/* ── Extended east / west / south areas ── */}
+      {/* ── Extended structures (tool shed, well) + extra lights ── */}
       <GardenExtension />
 
       {/* ── Stepping stones along main path ── */}
