@@ -1,16 +1,21 @@
 import { Vector3, type Vector3Tuple } from 'three';
 import type { SpawnPoint } from '@/game/types';
 import { VILLAGE_AABBS } from './roomAabbs';
-import { VILLAGE_FLOOR_Y, VILLAGE_SPAWN, WALK_ZONES } from './layout';
+import { VILLAGE_BOX, VILLAGE_FLOOR_Y, VILLAGE_SPAWN } from './layout';
 
-// Gnomes hide where people walk — the main street and the plaza only. Points are
-// generated on a jittered grid inside WALK_ZONES and any cell overlapping a
-// building/prop AABB is dropped, so a gnome can never land inside a house.
+// Gnomes hide all across the village grounds (streets, plaza and the grass
+// between/around houses) on a wide jittered grid. Any cell overlapping a
+// building/prop AABB is dropped, so a gnome can never land inside a house. A
+// roomy STEP keeps them spread out rather than clustered.
 
 const FLOOR_Y = VILLAGE_FLOOR_Y + 0.04;
 const PADDING = 0.45; // > filter padding (0.35) so every grid point survives the SAFE filter
-const STEP = 1.4;
-const SPAWN_CLEAR_R = 2.6; // keep the player's landing spot clear
+const STEP = 2.2;     // generous spacing so gnomes don't bunch up
+const INSET = 1;      // keep points off the perimeter walls
+const SPAWN_CLEAR_R = 3; // keep the player's landing spot clear
+
+const X_MIN = VILLAGE_BOX.xMin + INSET, X_MAX = VILLAGE_BOX.xMax - INSET;
+const Z_MIN = VILLAGE_BOX.zMin + INSET, Z_MAX = VILLAGE_BOX.zMax - INSET;
 
 function jitter(a: number, b: number, amp: number): number {
   const h = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453;
@@ -27,13 +32,11 @@ function isOpen(x: number, z: number): boolean {
 
 function buildPositions(): Vector3Tuple[] {
   const out: Vector3Tuple[] = [];
-  for (const zone of WALK_ZONES) {
-    for (let gx = zone.x0; gx <= zone.x1 + 1e-6; gx += STEP) {
-      for (let gz = zone.z0; gz <= zone.z1 + 1e-6; gz += STEP) {
-        const x = Math.round((gx + jitter(gx, gz, 0.4)) * 100) / 100;
-        const z = Math.round((gz + jitter(gz, gx, 0.4)) * 100) / 100;
-        if (isOpen(x, z)) out.push([x, FLOOR_Y, z]);
-      }
+  for (let gx = X_MIN; gx <= X_MAX + 1e-6; gx += STEP) {
+    for (let gz = Z_MIN; gz <= Z_MAX + 1e-6; gz += STEP) {
+      const x = Math.round((gx + jitter(gx, gz, 0.55)) * 100) / 100;
+      const z = Math.round((gz + jitter(gz, gx, 0.55)) * 100) / 100;
+      if (isOpen(x, z)) out.push([x, FLOOR_Y, z]);
     }
   }
   return out;
