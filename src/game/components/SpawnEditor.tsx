@@ -14,7 +14,9 @@ const MARKER_GEOM = new SphereGeometry(0.09, 8, 8);
 const MARKER_MAT = new MeshBasicMaterial({ color: '#ff2bd6' });
 const MAX_MARKERS = 8000;
 const DUMMY = new Object3D();
-const MARKER_LAYER = 1; // raycaster (layer 0) skips these — fast picking with thousands of dots
+// Markers stay visible (default layer) but are skipped by the raycaster via a
+// no-op raycast — keeps picking fast with thousands of dots without hiding them.
+const NOOP_RAYCAST = (): void => {};
 
 const round = (n: number): number => Math.round(n * 1000) / 1000;
 
@@ -43,7 +45,7 @@ export function SpawnEditor(): React.JSX.Element {
 
   const pick = useCallback((): Vector3Tuple | null => {
     RAY.setFromCamera(CENTER, camera);
-    const hit = RAY.intersectObjects(scene.children, true)[0]; // marker layer is skipped
+    const hit = RAY.intersectObjects(scene.children, true)[0]; // markers are non-raycast (NOOP_RAYCAST)
     return hit ? [round(hit.point.x), round(hit.point.y), round(hit.point.z)] : null;
   }, [camera, scene]);
 
@@ -51,7 +53,7 @@ export function SpawnEditor(): React.JSX.Element {
   useEffect(() => {
     const im = meshRef.current;
     if (!im) return;
-    im.layers.set(MARKER_LAYER);
+    im.raycast = NOOP_RAYCAST;
     const n = Math.min(markers.length, MAX_MARKERS);
     for (let i = 0; i < n; i++) {
       const m = markers[i];
