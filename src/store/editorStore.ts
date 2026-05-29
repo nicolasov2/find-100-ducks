@@ -5,7 +5,10 @@ import type { Vector3Tuple } from 'three';
 // gnomes may appear; they persist to localStorage so work isn't lost on reload.
 
 const KEY = 'f100d_village_markers';
-const MIN_SEP = 1.6; // minimum distance between markers — prevents clustering
+// Small spacing so the paint gun lays down dense small dots defining the allowed
+// spawn ZONE. Per-match separation between actual gnomes is handled later by the
+// game's spawn algorithm, not here.
+const MIN_SEP = 0.3;
 
 function load(): Vector3Tuple[] {
   if (typeof window === 'undefined') return [];

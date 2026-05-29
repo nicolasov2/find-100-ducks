@@ -3,17 +3,20 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import {
-  Raycaster, Vector2, SphereGeometry, MeshBasicMaterial,
-  type Object3D, type Vector3Tuple,
+  Raycaster, Vector2, Object3D, SphereGeometry, MeshBasicMaterial,
+  type InstancedMesh, type Vector3Tuple,
 } from 'three';
 import { useEditorStore } from '@/store/editorStore';
 
 const CENTER = new Vector2(0, 0);
 const RAY = new Raycaster();
-const MARKER_GEOM = new SphereGeometry(0.16, 10, 10);
+const MARKER_GEOM = new SphereGeometry(0.09, 8, 8);
 const MARKER_MAT = new MeshBasicMaterial({ color: '#ff2bd6' });
+const MAX_MARKERS = 8000;
+const DUMMY = new Object3D();
+const MARKER_LAYER = 1; // raycaster (layer 0) skips these — fast picking with thousands of dots
 
-const round = (n: number): number => Math.round(n * 100) / 100;
+const round = (n: number): number => Math.round(n * 1000) / 1000;
 
 function exportMarkers(): void {
   const ms = useEditorStore.getState().markers;
@@ -30,23 +33,36 @@ function exportMarkers(): void {
   useEditorStore.getState().setMessage(`¡Copiado + descargado! ${ms.length} puntos`);
 }
 
-/** Raycasts from the crosshair to place markers — single click or hold to paint. */
+/** Paint gun: raycasts from the crosshair; click or hold to spray dense spawn dots. */
 export function SpawnEditor(): React.JSX.Element {
   const camera = useThree((s) => s.camera);
   const scene = useThree((s) => s.scene);
   const markers = useEditorStore((s) => s.markers);
+  const meshRef = useRef<InstancedMesh>(null);
   const painting = useRef(false);
 
   const pick = useCallback((): Vector3Tuple | null => {
     RAY.setFromCamera(CENTER, camera);
-    for (const hit of RAY.intersectObjects(scene.children, true)) {
-      let o: Object3D | null = hit.object;
-      let isMarker = false;
-      while (o) { if (o.userData.editorMarker === true) { isMarker = true; break; } o = o.parent; }
-      if (!isMarker) return [round(hit.point.x), round(hit.point.y), round(hit.point.z)];
-    }
-    return null;
+    const hit = RAY.intersectObjects(scene.children, true)[0]; // marker layer is skipped
+    return hit ? [round(hit.point.x), round(hit.point.y), round(hit.point.z)] : null;
   }, [camera, scene]);
+
+  // Sync instanced markers with the store.
+  useEffect(() => {
+    const im = meshRef.current;
+    if (!im) return;
+    im.layers.set(MARKER_LAYER);
+    const n = Math.min(markers.length, MAX_MARKERS);
+    for (let i = 0; i < n; i++) {
+      const m = markers[i];
+      if (!m) continue;
+      DUMMY.position.set(m[0], m[1], m[2]);
+      DUMMY.updateMatrix();
+      im.setMatrixAt(i, DUMMY.matrix);
+    }
+    im.count = n;
+    im.instanceMatrix.needsUpdate = true;
+  }, [markers]);
 
   useEffect(() => {
     const store = useEditorStore.getState;
@@ -63,7 +79,7 @@ export function SpawnEditor(): React.JSX.Element {
     };
     const onKey = (e: KeyboardEvent): void => {
       const k = e.key.toLowerCase();
-      if (k === 'r') { const p = pick(); if (p) { store().removeNearest(p); store().setMessage('Borrado el más cercano'); } }
+      if (k === 'r') { const p = pick(); if (p) { store().removeNearest(p); } }
       else if (k === 'z') { store().undo(); store().setMessage('Deshecho'); }
       else if (k === 'c') { exportMarkers(); }
     };
@@ -77,7 +93,7 @@ export function SpawnEditor(): React.JSX.Element {
     };
   }, [pick]);
 
-  // Paint while the button is held: add a point each frame (store enforces spacing).
+  // Spray while held: add a dot each frame (store enforces a tiny 0.3m spacing).
   useFrame(() => {
     if (painting.current && document.pointerLockElement !== null) {
       const p = pick();
@@ -86,10 +102,11 @@ export function SpawnEditor(): React.JSX.Element {
   });
 
   return (
-    <group>
-      {markers.map((m, i) => (
-        <mesh key={i} position={m} geometry={MARKER_GEOM} material={MARKER_MAT} userData={{ editorMarker: true }} />
-      ))}
-    </group>
+    <instancedMesh
+      ref={meshRef}
+      args={[MARKER_GEOM, MARKER_MAT, MAX_MARKERS]}
+      frustumCulled={false}
+      userData={{ editorMarker: true }}
+    />
   );
 }
