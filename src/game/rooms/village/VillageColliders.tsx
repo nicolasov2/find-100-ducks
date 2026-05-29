@@ -9,6 +9,7 @@ import { VILLAGE_ITEMS } from './items';
 const SOLID: ReadonlySet<VillageItemKind> = new Set<VillageItemKind>([
   'townhouse1', 'townhouse2', 'house1', 'house2', 'house3', 'fantasyhouse',
   'bigbuilding', 'castle', 'windmill', 'well', 'market',
+  'tree', 'pine', 'hedge', 'cart', 'fence',
 ]);
 
 const WALL_H = 4;
