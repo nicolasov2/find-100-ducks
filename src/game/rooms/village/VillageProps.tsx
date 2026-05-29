@@ -21,6 +21,13 @@ const PROP: Record<VillageItemKind, { readonly url: string; readonly maxDim: num
   market: { url: '/models/village/market.glb', maxDim: 3.4 },
   barrel: { url: '/models/village/barrel.glb', maxDim: 1.1 },
   bucket: { url: '/models/village/bucket.glb', maxDim: 0.7 },
+  tree: { url: '/models/village/tree.glb', maxDim: 5 },
+  pine: { url: '/models/village/pine.glb', maxDim: 7 },
+  fence: { url: '/models/village/fence.glb', maxDim: 2.2 },
+  hedge: { url: '/models/village/hedge.glb', maxDim: 2.2 },
+  cart: { url: '/models/village/cart.glb', maxDim: 2.6 },
+  torch: { url: '/models/village/torch.glb', maxDim: 2.2 },
+  streetlight: { url: '/models/village/streetlight.glb', maxDim: 3.2 },
 };
 
 for (const def of Object.values(PROP)) useGLTF.preload(def.url);

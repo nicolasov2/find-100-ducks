@@ -21,7 +21,14 @@ export type VillageItemKind =
   | 'well'
   | 'market'
   | 'barrel'
-  | 'bucket';
+  | 'bucket'
+  | 'tree'
+  | 'pine'
+  | 'fence'
+  | 'hedge'
+  | 'cart'
+  | 'torch'
+  | 'streetlight';
 
 export interface VillageItem {
   readonly kind: VillageItemKind;
@@ -47,6 +54,13 @@ export const VILLAGE_BOUNDS: Record<VillageItemKind, LocalBounds> = {
   market: { min: [-1.9, 0, -1.9], max: [1.9, 3.2, 1.9] },
   barrel: { min: [-0.5, 0, -0.5], max: [0.5, 1.1, 0.5] },
   bucket: { min: [-0.35, 0, -0.35], max: [0.35, 0.6, 0.35] },
+  tree: { min: [-1.2, 0, -1.2], max: [1.2, 5, 1.2] },
+  pine: { min: [-1.1, 0, -1.1], max: [1.1, 7, 1.1] },
+  fence: { min: [-1.1, 0, -0.18], max: [1.1, 1.1, 0.18] },
+  hedge: { min: [-1.1, 0, -0.55], max: [1.1, 1.2, 0.55] },
+  cart: { min: [-1.3, 0, -0.9], max: [1.3, 1.5, 0.9] },
+  torch: { min: [-0.3, 0, -0.3], max: [0.3, 2, 0.3] },
+  streetlight: { min: [-0.35, 0, -0.35], max: [0.35, 3, 0.35] },
 };
 
 export const VILLAGE_FLOOR_Y = 0;

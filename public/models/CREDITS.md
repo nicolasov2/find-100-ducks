@@ -8,7 +8,8 @@ and assembled into a coherent village (street, plaza, well, market, castle, wind
 By **Quaternius** (https://quaternius.com), credited as a courtesy:
 
 `townhouse1`, `townhouse2`, `house1`, `house2`, `house3`, `fantasyhouse`,
-`bigbuilding`, `windmill`, `well`, `market`, `barrel`, `bucket`.
+`bigbuilding`, `windmill`, `well`, `market`, `barrel`, `bucket`,
+`tree`, `pine`, `fence`, `hedge`, `cart`, `torch`, `streetlight`.
 
 ## CC-BY 3.0 — attribution required
 
