@@ -49,7 +49,7 @@ export function StartButton(): React.JSX.Element {
       <div className="flex gap-2 rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-md">
         {([
           { id: 'mansion', label: '🏠 Cap 1: Mansión' },
-          { id: 'beach', label: '🏖️ Cap 2: Playa' },
+          { id: 'village', label: '🏰 Cap 2: Aldea' },
         ] as const).map((c) => (
           <button
             key={c.id}

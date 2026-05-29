@@ -24,9 +24,9 @@ import { PauseMenu } from '@/game/components/PauseMenu';
 import { LoveNote } from '@/game/components/LoveNote';
 import { DustMotes } from '@/game/components/DustMotes';
 import { Level1Mansion } from '@/game/components/Level1Mansion';
-import { Level2Beach } from '@/game/components/Level2Beach';
+import { Level2Village } from '@/game/components/Level2Village';
 import { SceneLighting } from '@/game/components/SceneLighting';
-import { BEACH_SPAWN } from '@/game/rooms/beach/layout';
+import { VILLAGE_SPAWN } from '@/game/rooms/village/layout';
 import { useGameStore } from '@/store/gameStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { initAudio, startMusic, setMasterVolume, setSfxVolume, setMusicVolume } from '@/game/systems/AudioManager';
@@ -72,8 +72,8 @@ export function GameCanvas(): React.JSX.Element {
         <CameraFOVSync />
         <Suspense fallback={null}>
           <Physics gravity={[0, -25, 0]}>
-            {level === 'mansion' ? <Level1Mansion /> : <Level2Beach />}
-            <Player key={level} spawn={level === 'beach' ? BEACH_SPAWN : MANSION_SPAWN} />
+            {level === 'mansion' ? <Level1Mansion /> : <Level2Village />}
+            <Player key={level} spawn={level === 'village' ? VILLAGE_SPAWN : MANSION_SPAWN} />
           </Physics>
           {level === 'mansion' && <DustMotes />}
           <Gnomes />
