@@ -23,13 +23,10 @@ import { WinScreen } from '@/game/components/WinScreen';
 import { PauseMenu } from '@/game/components/PauseMenu';
 import { LoveNote } from '@/game/components/LoveNote';
 import { DustMotes } from '@/game/components/DustMotes';
-import { Room1 } from '@/game/rooms/room1';
-import { Hallway1 } from '@/game/rooms/hallway1';
-import { Room2 } from '@/game/rooms/room2';
-import { Hallway2 } from '@/game/rooms/hallway2';
-import { Room3 } from '@/game/rooms/room3';
-import { Hallway3 } from '@/game/rooms/hallway3';
-import { Garden } from '@/game/rooms/garden';
+import { Level1Mansion } from '@/game/components/Level1Mansion';
+import { Level2Beach } from '@/game/components/Level2Beach';
+import { SceneLighting } from '@/game/components/SceneLighting';
+import { BEACH_SPAWN } from '@/game/rooms/beach/layout';
 import { useGameStore } from '@/store/gameStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { initAudio, startMusic, setMasterVolume, setSfxVolume, setMusicVolume } from '@/game/systems/AudioManager';
@@ -46,8 +43,11 @@ function CameraFOVSync(): null {
   return null;
 }
 
+const MANSION_SPAWN: readonly [number, number, number] = [-6, 1.7, 0];
+
 export function GameCanvas(): React.JSX.Element {
   const status = useGameStore((s) => s.status);
+  const level = useGameStore((s) => s.level);
   const sensitivity = useSettingsStore((s) => s.sensitivity);
 
   useEffect(() => {
@@ -68,32 +68,14 @@ export function GameCanvas(): React.JSX.Element {
         shadows
         camera={{ fov: 75, near: 0.1, far: 1000, position: [0, 1.7, 0] }}
       >
-        <ambientLight intensity={0.45} />
-        <hemisphereLight args={['#bfdfff', '#3a2a1a', 0.35]} />
-        <directionalLight
-          position={[15, 18, 10]}
-          intensity={0.9}
-          castShadow
-          shadow-mapSize={[2048, 2048]}
-          shadow-camera-left={-40}
-          shadow-camera-right={40}
-          shadow-camera-top={40}
-          shadow-camera-bottom={-40}
-          shadow-camera-far={100}
-        />
+        <SceneLighting level={level} />
         <CameraFOVSync />
         <Suspense fallback={null}>
           <Physics gravity={[0, -25, 0]}>
-            <Room1 />
-            <Hallway1 />
-            <Room2 />
-            <Hallway2 />
-            <Room3 />
-            <Hallway3 />
-            <Garden />
-            <Player />
+            {level === 'mansion' ? <Level1Mansion /> : <Level2Beach />}
+            <Player key={level} spawn={level === 'beach' ? BEACH_SPAWN : MANSION_SPAWN} />
           </Physics>
-          <DustMotes />
+          {level === 'mansion' && <DustMotes />}
           <Gnomes />
           <DyingGnomes />
           <FeatherBursts />

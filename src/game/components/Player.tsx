@@ -28,7 +28,11 @@ const rightVec = new Vector3();
 const moveVec = new Vector3();
 const UP_VEC = new Vector3(0, 1, 0);
 
-export function Player(): React.JSX.Element {
+export interface PlayerProps {
+  readonly spawn?: readonly [number, number, number];
+}
+
+export function Player({ spawn = SPAWN }: PlayerProps): React.JSX.Element {
   const bodyRef = useRef<RapierRigidBody>(null);
   const lastJumpAtRef = useRef<number>(0);
   const lastFootstepAtRef = useRef<number>(0);
@@ -122,7 +126,7 @@ export function Player(): React.JSX.Element {
       ref={bodyRef}
       type="dynamic"
       colliders={false}
-      position={SPAWN}
+      position={spawn}
       mass={1}
       linearDamping={0}
       lockRotations
