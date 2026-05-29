@@ -1,6 +1,9 @@
 import type { Vector3Tuple } from 'three';
 
-export type RoomId = 'room-1' | 'room-2' | 'room-3' | 'hallway-1' | 'hallway-2' | 'garden';
+export type RoomId = 'room-1' | 'room-2' | 'room-3' | 'hallway-1' | 'hallway-2' | 'garden' | 'beach';
+
+/** Selectable chapter / playable world. */
+export type LevelId = 'mansion' | 'beach';
 
 export interface SpawnPoint {
   readonly id: string;

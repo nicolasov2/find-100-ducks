@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSettingsStore, Difficulty, getDifficultyConfig } from '@/store/settingsStore';
 import { useGameStore } from '@/store/gameStore';
-import { SAFE_SPAWN_POOL } from '@/game/utils/safeSpawnPool';
+import { safePoolForLevel } from '@/game/utils/levelPools';
 import { startMusic } from '@/game/systems/AudioManager';
 import { WeaponSelector } from '@/game/components/WeaponSelector';
 import type { WeaponId } from '@/game/weapons/types';
+import type { LevelId } from '@/game/types';
 
 export function StartButton(): React.JSX.Element {
   const difficulty = useSettingsStore((s) => s.difficulty);
@@ -15,6 +16,7 @@ export function StartButton(): React.JSX.Element {
   const selectedWeapon = useSettingsStore((s) => s.selectedWeapon);
   const spawnGnomes = useGameStore((s) => s.spawnGnomes);
   const setCurrentWeapon = useGameStore((s) => s.setCurrentWeapon);
+  const [level, setLevel] = useState<LevelId>('mansion');
   const [showOptions, setShowOptions] = useState(false);
   const [showWeapons, setShowWeapons] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -28,7 +30,7 @@ export function StartButton(): React.JSX.Element {
   const handlePlay = () => {
     const config = getDifficultyConfig(difficulty);
     setCurrentWeapon(selectedWeapon as WeaponId);
-    spawnGnomes(SAFE_SPAWN_POOL, config.gnomeCount);
+    spawnGnomes(safePoolForLevel(level), config.gnomeCount, level);
     startMusic();
   };
 
@@ -44,6 +46,24 @@ export function StartButton(): React.JSX.Element {
 
   return (
     <div className="flex flex-col items-center gap-6">
+      <div className="flex gap-2 rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-md">
+        {([
+          { id: 'mansion', label: '🏠 Cap 1: Mansión' },
+          { id: 'beach', label: '🏖️ Cap 2: Playa' },
+        ] as const).map((c) => (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => setLevel(c.id)}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              level === c.id ? 'bg-yellow-500 text-black' : 'text-zinc-300 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+
       <div className="flex gap-4">
         <Link
           href="/play"

@@ -8,7 +8,7 @@ import {
   HINT_DURATION_MS,
   useGameStore,
 } from '@/store/gameStore';
-import { SAFE_SPAWN_POOL } from '@/game/utils/safeSpawnPool';
+import { safePoolForLevel } from '@/game/utils/levelPools';
 import { GnomeModel } from '@/game/components/GnomeModel';
 import { useGnomeMeshCache } from '@/game/hooks/useGnomeMeshCache';
 import { useSettingsStore, getDifficultyConfig } from '@/store/settingsStore';
@@ -33,7 +33,8 @@ export function Gnomes(): React.JSX.Element {
     if (gnomes.length === 0) {
       import('@/store/settingsStore').then((m) => {
         const config = m.getDifficultyConfig(m.useSettingsStore.getState().difficulty);
-        spawnGnomes(SAFE_SPAWN_POOL, config.gnomeCount);
+        const level = useGameStore.getState().level;
+        spawnGnomes(safePoolForLevel(level), config.gnomeCount, level);
       });
     }
   }, [gnomes.length, spawnGnomes]);

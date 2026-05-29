@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { BeamShot, DyingGnome, ExpPopup, Gnome, GameStatus, SpawnPoint } from '@/game/types';
+import type { BeamShot, DyingGnome, ExpPopup, Gnome, GameStatus, LevelId, SpawnPoint } from '@/game/types';
 import type { ShotInput, GameStats } from '@/store/gameTypes';
 import { shuffled } from '@/game/utils/shuffle';
 import { randomPalette, randomScale, randomBeard } from '@/game/utils/gnomePalettes';
@@ -22,6 +22,7 @@ export type { ShotInput, GameStats } from '@/store/gameTypes';
 
 export interface GameState {
   status: GameStatus;
+  level: LevelId;
   gnomeTarget: number;
   gnomes: readonly Gnome[];
   dyingGnomes: readonly DyingGnome[];
@@ -39,7 +40,7 @@ export interface GameState {
   setCurrentWeapon: (id: WeaponId) => void;
   triggerHint: () => void;
   spendGameExp: (amount: number) => boolean;
-  spawnGnomes: (pool: readonly SpawnPoint[], count: number) => void;
+  spawnGnomes: (pool: readonly SpawnPoint[], count: number, level?: LevelId) => void;
   triggerShot: (input: ShotInput) => void;
   purgeExpiredEffects: (now: number) => void;
   clearHitFlash: () => void;
@@ -52,7 +53,7 @@ const emptyStats = (): GameStats => ({
 });
 
 export const useGameStore = create<GameState>((set) => ({
-  status: 'menu', gnomeTarget: 100, gnomes: [], dyingGnomes: [], beams: [], expPopups: [],
+  status: 'menu', level: 'mansion', gnomeTarget: 100, gnomes: [], dyingGnomes: [], beams: [], expPopups: [],
   startedAt: null, endedAt: null, lastShotAt: null, stats: emptyStats(), hitFlash: false,
   comboDisplay: 0, currentWeaponId: 'laser-pistol', hintActivatedAt: null,
 
@@ -71,7 +72,7 @@ export const useGameStore = create<GameState>((set) => ({
     return ok;
   },
 
-  spawnGnomes: (pool, count = 100) =>
+  spawnGnomes: (pool, count = 100, level = 'mansion') =>
     set(() => {
       const picked = shuffled(pool).slice(0, count);
       const gnomes: Gnome[] = picked.map((sp, i) => {
@@ -88,7 +89,7 @@ export const useGameStore = create<GameState>((set) => ({
         };
       });
       return {
-        gnomes, gnomeTarget: count, dyingGnomes: [], beams: [], expPopups: [],
+        gnomes, level, gnomeTarget: count, dyingGnomes: [], beams: [], expPopups: [],
         status: 'playing', startedAt: Date.now(), endedAt: null, lastShotAt: null,
         stats: emptyStats(), hitFlash: false, comboDisplay: 0, hintActivatedAt: null,
       };

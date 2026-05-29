@@ -2,7 +2,7 @@
 
 import { useGameStore } from '@/store/gameStore';
 import { useSettingsStore, ACHIEVEMENTS_DEF, getDifficultyConfig } from '@/store/settingsStore';
-import { SAFE_SPAWN_POOL } from '@/game/utils/safeSpawnPool';
+import { safePoolForLevel } from '@/game/utils/levelPools';
 import { useWinProcessor } from '@/game/hooks/useWinProcessor';
 import { formatTime, getStars } from '@/game/utils/winUtils';
 
@@ -14,6 +14,7 @@ export function WinScreen(): React.JSX.Element | null {
   const gnomeTarget = useGameStore((s) => s.gnomeTarget);
   const reset = useGameStore((s) => s.reset);
   const spawnGnomes = useGameStore((s) => s.spawnGnomes);
+  const level = useGameStore((s) => s.level);
   const difficulty = useSettingsStore((s) => s.difficulty);
   const leaderboard = useSettingsStore((s) => s.leaderboard);
   const unlockedAchievements = useSettingsStore((s) => s.unlockedAchievements);
@@ -31,7 +32,7 @@ export function WinScreen(): React.JSX.Element | null {
     resetProcessor();
     reset();
     const config = getDifficultyConfig(difficulty);
-    spawnGnomes(SAFE_SPAWN_POOL, config.gnomeCount);
+    spawnGnomes(safePoolForLevel(level), config.gnomeCount, level);
   };
 
   const newAchievements = ACHIEVEMENTS_DEF.filter((a) => unlockedAchievements.includes(a.id));
