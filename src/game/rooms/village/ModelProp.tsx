@@ -5,20 +5,19 @@ import { Box3, Vector3, type Vector3Tuple } from 'three';
 import { useGLTF, Clone } from '@react-three/drei';
 
 export interface ModelPropProps {
-  /** Path under /public, e.g. '/models/props/palm.glb'. */
+  /** Path under /public, e.g. '/models/village/well.glb'. */
   readonly url: string;
   /** Target size (m) of the model's largest dimension — normalizes any source scale. */
   readonly maxDim: number;
   readonly position: Vector3Tuple;
   readonly rotationY?: number;
-  /** Extra per-instance multiplier on top of the fitted scale. */
   readonly scale?: number;
 }
 
 /**
  * Renders a .glb prop normalized to a known size and seated on the ground (y=0),
- * regardless of the source asset's original scale/origin. The drei <Clone> shares
- * geometries/materials across repeated instances (e.g. the 12 palms).
+ * regardless of the source asset's scale/origin. drei <Clone> shares geometries
+ * across repeated instances.
  */
 export function ModelProp({ url, maxDim, position, rotationY = 0, scale = 1 }: ModelPropProps): React.JSX.Element {
   const { scene } = useGLTF(url);
